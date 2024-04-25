@@ -109,26 +109,32 @@ const reformat = (status) => {
           </tr>
         </thead>
         <tbody class="bg-white">
-          <tr v-for="(task, index) in taskdata" :key="task.id">
+          <tr
+            v-for="(task, index) in taskdata"
+            :key="task.id"
+            class="itbkk-item"
+          >
             <th class="text-blue-400">{{ task.id }}</th>
-            <td>
+            <td class="itbkk-title">
               <button @click="openModal(task.id)" class="btn btn-ghost">
                 {{ task.title }} <img src="../../public/pen.png" class="w-4" />
               </button>
             </td>
-            <td>
-              <p>
+            <td class="itbkk-assignees">
+              <p v-if="task.assignees">
                 {{ task.assignees }}
               </p>
+              <p v-else class="italic text-gray-500">Unassigned</p>
             </td>
-            <td>
+            <td class="itbkk-status">
               <div
-                class="border rounded-md p-2 text-white w-20"
+                class="border rounded-md p-2 text-white w-24"
                 :class="{
-                  'bg-gray-400': reformat(task.status) === 'No Status',
-                  'bg-yellow-400': reformat(task.status) === 'To Do',
-                  'bg-purple-400': reformat(task.status) === 'Doing',
-                  'bg-green-400': reformat(task.status) === 'Done',
+                  'bg-gray-400 font-bold':
+                    reformat(task.status) === 'No Status',
+                  'bg-yellow-400 font-bold': reformat(task.status) === 'To Do',
+                  'bg-purple-400 font-bold': reformat(task.status) === 'Doing',
+                  'bg-green-400 font-bold': reformat(task.status) === 'Done',
                 }"
               >
                 {{ reformat(task.status) }}

@@ -26,7 +26,7 @@ const reformat = (status) => {
       >
         <input
           type="text"
-          className="input w-full max-w-xs pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg"
+          className="itbkk-title input w-full max-w-xs pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg"
           v-model="task.title"
           placeholder="Enter Title here..."
         />
@@ -34,9 +34,12 @@ const reformat = (status) => {
         <div class="border-2 border-blue-400 row-span-4 col-span-3 rounded-lg">
           <p class="p-5 font-bold text-blue-400">Description</p>
           <textarea
-            class="textarea textarea-ghost p-4 h-3/4 w-11/12 ml-9"
+            class="itbkk-description textarea textarea-ghost p-4 h-3/4 w-11/12 ml-9"
             v-model="task.description"
-            :class="{ 'bg-white pl-5  text-black': !task.description }"
+            :placeholder="task.description ? '' : 'No Description Provided'"
+            :class="
+              task.description ? 'bg-white text-black' : 'italic text-gray-500'
+            "
           ></textarea>
         </div>
 
@@ -46,9 +49,11 @@ const reformat = (status) => {
           <p class="p-3 font-bold text-blue-400">Assignees</p>
           <textarea
             v-model="task.assignees"
-            class="pl-5 textarea textarea-ghost h-3/5 w-11/12 ml-2"
-            :class="{ 'bg-white pl-5 text-black': !task.assignees }"
-            placeholder="Unassigned"
+            class="itbkk-assignees pl-5 textarea textarea-ghost h-3/5 w-11/12 ml-2"
+            :placeholder="task.assignees ? '' : 'Unassigned'"
+            :class="
+              task.assignees ? 'bg-white text-black' : 'italic text-gray-500'
+            "
           ></textarea>
         </div>
 
@@ -58,7 +63,7 @@ const reformat = (status) => {
           <label for="status" class="p-2 font-bold text-blue-400">Status</label>
           <select
             v-model="task.status"
-            class="pl-5 border-2 rounded-md h-10 pr-5"
+            class="itbkk-status pl-5 border-2 rounded-md h-10 pr-5"
           >
             <option value="NO_STATUS">No Status</option>
             <option value="TO_DO">To Do</option>
@@ -68,13 +73,13 @@ const reformat = (status) => {
         </div>
 
         <div class="col-start-4 rounded-lg">
-          <p class="pl-3 font-semibold text-sm text-blue-400">
+          <p class="itbkk-timezone pl-3 font-semibold text-sm text-blue-400">
             Time Zone : {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
           </p>
-          <p class="pl-3 font-semibold text-sm text-blue-400">
+          <p class="itbkk-created-on pl-3 font-semibold text-sm text-blue-400">
             Created On : {{ new Date(task.createdOn).toLocaleString("en-US") }}
           </p>
-          <p class="pl-3 font-semibold text-sm text-blue-400">
+          <p class="itbkk-updated-on pl-3 font-semibold text-sm text-blue-400">
             Updated On : {{ new Date(task.updatedOn).toLocaleString("en-US") }}
           </p>
         </div>

@@ -51,23 +51,69 @@ const reformat = (status) => {
 
 <template>
   <!-- Task table -->
-  <div class="flex justify-center mt-40">
-    <div class="overflow-x-auto border-2 rounded-md w-4/5">
+  <div class="flex flex-col items-center mt-20">
+    <div class="flex justify-between w-4/5">
+      <div class="font-bold text-4xl text-blue-400 m-2">My Task</div>
+      <div class="dropdown dropdown-bottom dropdown-end">
+        <div
+          tabIndex="{0}"
+          role="button"
+          class="btn btn-border border-bg-white m-1"
+        >
+          filter <img src="../../public/filter.png" class="w-4" />
+        </div>
+        <ul
+          tabIndex="{0}"
+          class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+        >
+          <li>
+            <a
+              ><div class="border bg-gray-400 rounded-md p-2 text-white">
+                No Status
+              </div></a
+            >
+          </li>
+          <li>
+            <a
+              ><div class="border bg-yellow-400 rounded-md p-2 text-white">
+                To Do
+              </div></a
+            >
+          </li>
+          <li>
+            <a
+              ><div class="border bg-purple-400 rounded-md p-2 text-white">
+                Doing
+              </div></a
+            >
+          </li>
+          <li>
+            <a
+              ><div class="border bg-green-400 rounded-md p-2 text-white">
+                Done
+              </div></a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto border border-blue-400 rounded-md w-4/5 mt-4">
       <table class="table">
-        <thead class="bg-slate-100">
-          <tr>
+        <thead class="bg-blue-400">
+          <tr class="text-white text-sm">
             <th></th>
             <th>Title</th>
             <th>Assignees</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-white">
           <tr v-for="(task, index) in taskdata" :key="task.id">
-            <th>{{ task.id }}</th>
+            <th class="text-blue-400">{{ task.id }}</th>
             <td>
               <button @click="openModal(task.id)" class="btn btn-ghost">
-                {{ task.title }}
+                {{ task.title }} <img src="../../public/pen.png" class="w-4" />
               </button>
             </td>
             <td>
@@ -75,7 +121,19 @@ const reformat = (status) => {
                 {{ task.assignees }}
               </p>
             </td>
-            <td>{{ reformat(task.status) }}</td>
+            <td>
+              <div
+                class="border rounded-md p-2 text-white w-20"
+                :class="{
+                  'bg-gray-400': reformat(task.status) === 'No Status',
+                  'bg-yellow-400': reformat(task.status) === 'To Do',
+                  'bg-purple-400': reformat(task.status) === 'Doing',
+                  'bg-green-400': reformat(task.status) === 'Done',
+                }"
+              >
+                {{ reformat(task.status) }}
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>

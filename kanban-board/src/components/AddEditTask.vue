@@ -24,36 +24,63 @@ const reformat = (status) => {
       <div
         class="w-4/5 grid grid-rows-6 grid-cols-4 gap-2 bg-white p-10 rounded-lg"
       >
-        <div class="pl-2 col-span-4 font-bold text-3xl rounded-lg">
-          {{ task.title }}
-        </div>
-        <div class="border-2 row-span-4 col-span-3 rounded-lg">
-          <p class="p-5 font-bold">Description</p>
-          <p class="pl-5">{{ task.description }}</p>
+        <input
+          type="text"
+          className="input w-full max-w-xs pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg"
+          v-model="task.title"
+          placeholder="Enter Title here..."
+        />
+
+        <div class="border-2 border-blue-400 row-span-4 col-span-3 rounded-lg">
+          <p class="p-5 font-bold text-blue-400">Description</p>
+          <textarea
+            class="textarea textarea-ghost p-4 h-3/4 w-11/12 ml-9"
+            v-model="task.description"
+            :class="{ 'bg-white pl-5  text-black': !task.description }"
+          ></textarea>
         </div>
 
-        <div class="border-2 col-start-4 row-start-2 row-end-4 rounded-lg">
-          <p class="p-3 font-bold">Assignees</p>
-          <p class="pl-5">{{ task.assignees }}</p>
+        <div
+          class="border-2 border-blue-400 col-start-4 row-start-2 row-end-4 rounded-lg"
+        >
+          <p class="p-3 font-bold text-blue-400">Assignees</p>
+          <textarea
+            v-model="task.assignees"
+            class="pl-5 textarea textarea-ghost h-3/5 w-11/12 ml-2"
+            :class="{ 'bg-white pl-5 text-black': !task.assignees }"
+            placeholder="Unassigned"
+          ></textarea>
         </div>
-        <div class="border-2 col-start-4 row-start-4 row-end-5 rounded-lg">
-          <p class="p-2 font-bold">Status</p>
-          <p class="pl-5">{{ reformat(task.status) }}</p>
+
+        <div
+          class="border-2 border-blue-400 col-start-4 p-2 row-start-4 row-end-5 rounded-lg"
+        >
+          <label for="status" class="p-2 font-bold text-blue-400">Status</label>
+          <select
+            v-model="task.status"
+            class="pl-5 border-2 rounded-md h-10 pr-5"
+          >
+            <option value="NO_STATUS">No Status</option>
+            <option value="TO_DO">To Do</option>
+            <option value="DOING">Doing</option>
+            <option value="DONE">Done</option>
+          </select>
         </div>
+
         <div class="col-start-4 rounded-lg">
-          <p class="pl-3 font-bold text-sm">
+          <p class="pl-3 font-semibold text-sm text-blue-400">
             Time Zone : {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
           </p>
-          <p class="pl-3 font-bold text-sm">
+          <p class="pl-3 font-semibold text-sm text-blue-400">
             Created On : {{ new Date(task.createdOn).toLocaleString("en-US") }}
           </p>
-          <p class="pl-3 font-bold text-sm">
+          <p class="pl-3 font-semibold text-sm text-blue-400">
             Updated On : {{ new Date(task.updatedOn).toLocaleString("en-US") }}
           </p>
         </div>
 
         <div class="col-span-4 place-self-end rounded-lg">
-          <button class="btn m-3">OK</button>
+          <button class="btn m-3 bg-green-400 text-white">Save</button>
           <button class="btn" @click="$emit('closeModal', false)">Close</button>
         </div>
       </div>

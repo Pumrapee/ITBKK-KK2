@@ -15,10 +15,8 @@ async function getItemById(url, id) {
     const item = await data.json()
     return item
   } catch (error) {
-    console.log("Member Not Found!")
-    console.log(`error: ${error}`)
     console.log(data.status)
-    if (data.status === 404) return undefined
+    if (data.status === 404) return 404
   }
 }
 

@@ -1,9 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue"
-import tasks from "../../data/task.json"
 import AddEditTask from "../components/AddEditTask.vue"
-import { getItems,getItemById } from "../libs/fetchUtils"
-
+import { getItems, getItemById } from "../libs/fetchUtils"
+import router from "@/router"
 
 const showModal = ref(false)
 const taskdata = ref([])
@@ -14,10 +13,20 @@ const closeModal = () => {
 }
 
 const openModal = async (taskId) => {
-  console.log(taskId);
-  const data = await getItemById(import.meta.env.VITE_BASE_URL, taskId)
-  task.value = await data
-  showModal.value = true
+  console.log(taskId)
+  if (taskId) {
+    const data = await getItemById(import.meta.env.VITE_BASE_URL, taskId)
+    if (data.status === 404) {
+      alert("The requested task does not exist")
+      //router.go(-1) // Redirect to previous page
+      router.push("/task")
+    } else {
+      task.value = data
+      showModal.value = true
+    }
+  }
+
+  console.log(task.value)
 }
 
 onMounted(async () => {
@@ -25,7 +34,19 @@ onMounted(async () => {
   taskdata.value = data
 
   console.log(taskdata.value)
+
+  const format = () => {}
 })
+
+const reformat = (status) => {
+  const statusMap = {
+    NO_STATUS: "No Status",
+    TO_DO: "To Do",
+    DOING: "Doing",
+    DONE: "Done",
+  }
+  return statusMap[status] || status // ถ้าไม่มีค่าใน statusMap ให้ใช้ค่าเดิม
+}
 </script>
 
 <template>
@@ -50,22 +71,18 @@ onMounted(async () => {
               </button>
             </td>
             <td>
-              <p v-for="(assignee, index) in task.assignees" :key="index">
-                {{ assignee }}
+              <p>
+                {{ task.assignees }}
               </p>
             </td>
-            <td>{{ task.status }}</td>
+            <td>{{ reformat(task.status) }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <AddEditTask
-    @closeModal="closeModal"
-    :showModal="showModal"
-    :task="task"
-  />
+  <AddEditTask @closeModal="closeModal" :showModal="showModal" :task="task" />
 </template>
 
 <style scoped></style>

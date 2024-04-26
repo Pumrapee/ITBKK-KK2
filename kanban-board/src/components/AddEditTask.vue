@@ -26,7 +26,7 @@ const reformat = (status) => {
       >
         <input
           type="text"
-          className="itbkk-title input w-full max-w-xs pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg"
+          className="itbkk-title input pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg "
           v-model="task.title"
           placeholder="Enter Title here..."
         />
@@ -36,11 +36,14 @@ const reformat = (status) => {
           <textarea
             class="itbkk-description textarea textarea-ghost p-4 h-3/4 w-11/12 ml-9"
             v-model="task.description"
-            :placeholder="task.description ? '' : 'No Description Provided'"
+            placeholder="No Description Provided"
             :class="
               task.description ? 'bg-white text-black' : 'italic text-gray-500'
             "
-          ></textarea>
+          >
+ {{ task.description }}  </textarea
+          >
+          <!-- <p class="itbkk-description">No Description Provided</p> -->
         </div>
 
         <div
@@ -78,10 +81,12 @@ const reformat = (status) => {
           </p>
           <p class="itbkk-created-on pl-3 font-semibold text-sm text-blue-400">
             Created On :
-            {{ new Date(task.createdOn).toLocaleString("th-TH") }}
+
+            {{ new Date(task.createdOn).toLocaleString("en-GB") }}
           </p>
           <p class="itbkk-updated-on pl-3 font-semibold text-sm text-blue-400">
-            Updated On : {{ new Date(task.updatedOn).toLocaleString("th-TH") }}
+            Updated On :
+            {{ new Date(task.updatedOn).toLocaleString("en-GB") }}
           </p>
         </div>
 

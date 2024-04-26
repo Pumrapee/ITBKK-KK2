@@ -61,7 +61,7 @@ const reformat = (status) => {
           role="button"
           class="btn btn-border border-bg-white m-1"
         >
-          filter <img src="../../public/filter.png" class="w-4" />
+          filter <img src="/icons/filter.png" class="w-4" />
         </div>
         <ul
           tabIndex="{0}"
@@ -120,15 +120,18 @@ const reformat = (status) => {
               <router-link :to="`/task/${task.id}`">
                 <button @click="openModal(task.id)" class="btn btn-ghost">
                   {{ task.title }}
-                  <img src="../../public/pen.png" class="w-4" />
+                  <img src="/icons/pen.png" class="w-4" />
                 </button>
               </router-link>
             </td>
-            <td class="itbkk-assignees">
+            <td
+              class="itbkk-assignees"
+              :style="{ 'font-style': task.assignees ? 'normal' : 'italic' }"
+            >
               <p v-if="task.assignees">
                 {{ task.assignees }}
               </p>
-              <p v-else class="italic text-gray-500">Unassigned</p>
+              <p v-else class="text-gray-500">Unassigned</p>
             </td>
             <td class="itbkk-status">
               <div

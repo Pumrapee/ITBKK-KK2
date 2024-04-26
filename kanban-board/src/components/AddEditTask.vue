@@ -77,10 +77,11 @@ const reformat = (status) => {
             Time Zone : {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
           </p>
           <p class="itbkk-created-on pl-3 font-semibold text-sm text-blue-400">
-            Created On : {{ new Date(task.createdOn).toLocaleString("en-US") }}
+            Created On :
+            {{ new Date(task.createdOn).toLocaleString("th-TH") }}
           </p>
           <p class="itbkk-updated-on pl-3 font-semibold text-sm text-blue-400">
-            Updated On : {{ new Date(task.updatedOn).toLocaleString("en-US") }}
+            Updated On : {{ new Date(task.updatedOn).toLocaleString("th-TH") }}
           </p>
         </div>
 

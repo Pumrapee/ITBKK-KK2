@@ -10,6 +10,7 @@ const task = ref()
 
 const closeModal = () => {
   showModal.value = false
+  router.push("/task")
 }
 
 const openModal = async (taskId) => {
@@ -19,7 +20,7 @@ const openModal = async (taskId) => {
     if (data.status === 404) {
       alert("The requested task does not exist")
       //router.go(-1) // Redirect to previous page
-      router.push("/task")
+      //router.push("/task")
     } else {
       task.value = data
       showModal.value = true
@@ -116,9 +117,12 @@ const reformat = (status) => {
           >
             <th class="text-blue-400">{{ task.id }}</th>
             <td class="itbkk-title">
-              <button @click="openModal(task.id)" class="btn btn-ghost">
-                {{ task.title }} <img src="../../public/pen.png" class="w-4" />
-              </button>
+              <router-link :to="`/task/${task.id}`">
+                <button @click="openModal(task.id)" class="btn btn-ghost">
+                  {{ task.title }}
+                  <img src="../../public/pen.png" class="w-4" />
+                </button>
+              </router-link>
             </td>
             <td class="itbkk-assignees">
               <p v-if="task.assignees">

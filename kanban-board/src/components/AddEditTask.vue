@@ -53,11 +53,13 @@ const reformat = (status) => {
           <textarea
             v-model="task.assignees"
             class="itbkk-assignees pl-5 textarea textarea-ghost h-3/5 w-11/12 ml-2"
-            :placeholder="task.assignees ? '' : 'Unassigned'"
+            placeholder="Unassigned"
             :class="
               task.assignees ? 'bg-white text-black' : 'italic text-gray-500'
             "
-          ></textarea>
+          >
+ {{ task.assignees }}</textarea
+          >
         </div>
 
         <div

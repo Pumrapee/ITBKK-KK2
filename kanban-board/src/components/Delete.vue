@@ -24,10 +24,16 @@ const confirmDelete = async () => {
     mytasks.removeTasks(modal.deleteId)
     deletePass.value = true
     modal.showDelete = false
+    setTimeout(() => {
+      deletePass.value = false
+    }, "4000")
   } else if (deleteItem === 404) {
     mytasks.removeTasks(modal.deleteId)
     deleteFail.value = true
     modal.showDelete = false
+    setTimeout(() => {
+      deletePass.value = false
+    }, "4000")
   }
 }
 
@@ -42,8 +48,12 @@ const closeFailDelete = () => {
 
 <template>
   <!-- Alert pass -->
-  <div v-show="deletePass" class="flex justify-center mt-3 mb-3">
-    <div role="alert" class="alert shadow-lg w-2/5">
+  <div
+    v-show="deletePass"
+    class="fixed bottom-6 right-4 mb-0 mr-1"
+    style="z-index: 100"
+  >
+    <div role="alert" class="alert shadow-lg w-auto">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-6 w-6"
@@ -60,7 +70,7 @@ const closeFailDelete = () => {
 
       <span class="itbkk-message"
         >The task
-        <span class="font-semibold text-red-500"
+        <span class="font-semibold text-red-500 break-all ..."
           >"{{ modal.deleteTitle }}"</span
         >
         has been <span class="font-semibold text-red-500">deleted</span></span
@@ -71,8 +81,12 @@ const closeFailDelete = () => {
   </div>
 
   <!-- Alert fail -->
-  <div v-if="deleteFail" class="flex justify-center mt-3">
-    <div role="alert" class="alert alert-error shadow-lg w-2/5">
+  <div
+    v-if="deleteFail"
+    class="fixed bottom-6 right-4 mb-0 mr-1"
+    style="z-index: 100"
+  >
+    <div role="alert" class="alert alert-error shadow-lg w-auto">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-6 w-6 text-white"
@@ -115,7 +129,7 @@ const closeFailDelete = () => {
             Confirm
           </button>
           <button class="itbkk-button-cancel btn" @click="cancelDelete()">
-            Close
+            Cancel
           </button>
         </div>
       </div>

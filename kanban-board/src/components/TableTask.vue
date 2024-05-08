@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 import EditTask from "../components/EditTask.vue"
 import { getItemById } from "../libs/fetchUtils"
 import { useTaskStore } from "../stores/taskStore"
 import router from "@/router"
 import { useModalStore } from "../stores/modal"
 import Delete from "../components/Delete.vue"
+import AlertModel from "../components/AlertModel.vue"
+import { RouterLink } from "vue-router"
 
 const showModal = ref(false)
 const task = ref()
@@ -17,6 +19,8 @@ const myTask = useTaskStore()
 
 const modal = useModalStore()
 
+myTask.showNavbar = true
+
 const closeModal = () => {
   showModal.value = false
   router.go(-1)
@@ -27,9 +31,12 @@ const openModal = async (taskId) => {
     const data = await getItemById(import.meta.env.VITE_BASE_URL, taskId)
     if (data.status === 404) {
       //require PBI2
-      alert("The requested task does not exist")
+      // alert("The requested task does not exist")
       //require PBI5
       editFail.value = true
+      setTimeout(() => {
+        editFail.value = false
+      }, "4000")
       mytasks.removeTasks(modal.deleteId)
       router.go(-1)
     } else {
@@ -62,8 +69,12 @@ const openDeleteModal = (id, title, index) => {
   <Delete />
 
   <!-- Alert fail Edit-->
-  <div v-if="editFail" class="flex justify-center mt-3">
-    <div role="alert" class="alert alert-error w-2/3">
+  <div
+    v-if="editFail"
+    class="fixed bottom-6 right-4 mb-0 mr-1"
+    style="z-index: 100"
+  >
+    <div role="alert" class="alert alert-error w-auto">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-6 w-6 text-white"
@@ -77,7 +88,9 @@ const openDeleteModal = (id, title, index) => {
           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      <span class="itbkk-message text-white">The update was unsuccessful</span>
+      <span class="itbkk-message text-white"
+        >An error has occurred, the task does not exist.</span
+      >
       <button class="text-white" @click="editFail = false">X</button>
     </div>
   </div>
@@ -86,6 +99,9 @@ const openDeleteModal = (id, title, index) => {
   <div class="flex flex-col items-center mt-16 mb-20">
     <div class="flex justify-between w-4/5">
       <div class="font-bold text-4xl text-blue-400 m-2">My Task</div>
+      <RouterLink :to="{ name: 'tableStatus' }">
+        <button class="btn text-l">Manage Status</button>
+      </RouterLink>
     </div>
 
     <div class="overflow-x-auto border border-blue-400 rounded-md w-4/5 mt-4">
@@ -164,6 +180,8 @@ const openDeleteModal = (id, title, index) => {
       </table>
     </div>
   </div>
+
+  <!-- Alert -->
 </template>
 
 <style scoped>

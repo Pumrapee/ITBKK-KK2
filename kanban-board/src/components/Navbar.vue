@@ -1,10 +1,13 @@
 <script setup>
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import AddTask from "../components/AddTask.vue"
 import router from "@/router"
 import { useModalStore } from "@/stores/modal"
+import { useTaskStore } from "../stores/taskStore"
 
+const myTask = useTaskStore()
 const showAdd = ref()
+const showButtons = ref(true) // เริ่มต้นแสดงปุ่ม
 
 const showModalAdd = () => {
   showAdd.value = true
@@ -32,6 +35,7 @@ const showbtnDelete = () => {
 
     <div class="navbar-end">
       <button
+        v-if="myTask.showNavbar"
         @click="showbtnDelete"
         class="itbkk-button-action btn border-red-500 bg-red-500 text-white mr-2"
       >
@@ -40,6 +44,7 @@ const showbtnDelete = () => {
 
       <router-link to="/task/add">
         <button
+          v-if="myTask.showNavbar"
           @click="showModalAdd"
           class="itbkk-button-add btn border-blue-400 bg-blue-400 text-white hover:bg-pink-400"
         >

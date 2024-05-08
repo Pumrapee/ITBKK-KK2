@@ -100,9 +100,15 @@ const editSave = async (task) => {
 
     emits("closeModal")
     editPass.value = true
+    setTimeout(() => {
+      editPass.value = false
+    }, "4000")
   }
   if (statusCode === 400) {
     alert("There are some fields that exceed the limit.")
+  }
+  if (statusCode === 404) {
+    alert("This task is deleted!!. Can not update")
   }
 }
 
@@ -115,8 +121,12 @@ watch(props, () => {
 
 <template>
   <!-- Alert Pass Edit-->
-  <div v-if="editPass" class="flex justify-center mt-3">
-    <div role="alert" class="alert alert-success shadow-lg w-2/5">
+  <div
+    v-if="editPass"
+    class="fixed bottom-6 right-4 mb-0 mr-1"
+    style="z-index: 100"
+  >
+    <div role="alert" class="alert alert-success shadow-lg w-auto">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current shrink-0 h-6 w-6 text-white"

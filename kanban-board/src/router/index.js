@@ -26,17 +26,17 @@ const router = createRouter({
       ],
     },
     {
-      path: "/task",
+      path: "/status/manage",
       name: "tableStatus",
       component: StatusView,
       children: [
         {
-          path: "",
+          path: "/status/add",
           name: "AddStatus",
           component: AddStatus,
         },
         {
-          path: "",
+          path: "/status/:id/edit",
           name: "EditStatus",
           component: EditStatus,
         },

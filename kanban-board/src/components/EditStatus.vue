@@ -1,11 +1,91 @@
 <script setup>
-import { defineProps, defineEmits } from "vue"
+import { defineProps, defineEmits, computed } from "vue"
+import { watch, ref } from "vue"
+import { editItem } from "@/libs/fetchUtils"
+import { useStatusStore } from "@/stores/statusStore"
 
-const { showEditStatus } = defineProps({
+const props = defineProps({
   showEditStatus: Boolean,
+  taskStatus: Object,
+})
+const emits = defineEmits(["closeEditStatus"])
+
+const newStatus = ref({})
+const myStatus = useStatusStore()
+const errorStatus = ref({
+  name: "",
+  description: "",
 })
 
-defineEmits(["closeEditStatus"])
+const changeStatus = computed(() => {
+  const trimAndCheckNull = (value) => {
+    if (value === null) return null
+    else {
+      return value?.trim().length === 0 ? null : value?.trim()
+    }
+  }
+
+  const oldStatus = {
+    name: props.taskStatus.name,
+    description: props.taskStatus.description,
+  }
+
+  const newName = trimAndCheckNull(newStatus.value.name)
+  const newDescription = trimAndCheckNull(newStatus.value.description)
+
+  newStatus.value.name?.length > 50
+    ? (errorStatus.value.name = "Name exceeds the limit of 50 characters.")
+    : newStatus.value.name?.length === 0
+    ? (errorStatus.value.name = "Name is require.")
+    : (errorStatus.value.name = "")
+
+  newStatus.value.description?.length > 200
+    ? (errorStatus.value.description =
+        "Description exceeds the limit of 200 characters.")
+    : (errorStatus.value.description = "")
+
+  return (
+    (oldStatus.name === newName && oldStatus.description === newDescription) ||
+    newName === null
+  )
+})
+
+const editStatusSave = async (status) => {
+  const editStatus = { ...status }
+  editStatus.name = editStatus.name?.trim()
+  editStatus.description = editStatus.description?.trim()
+
+  if (editStatus.name === "") {
+    editStatus.name = null
+  }
+  if (editStatus.description === "") {
+    editStatus.description = null
+  }
+
+  const { editedItem, statusCode } = await editItem(
+    `${import.meta.env.VITE_BASE_URL}statuses`,
+    editStatus.id,
+    {
+      name: editStatus.name,
+      description: editStatus.description,
+    }
+  )
+
+  if (statusCode === 200) {
+    myStatus.updateStatus(
+      editedItem.id,
+      editedItem.name,
+      editedItem.description
+    )
+    emits("closeEditStatus")
+  }
+}
+
+watch(props, () => {
+  if (props.showEditStatus) {
+    Object.assign(newStatus.value, props.taskStatus)
+  }
+})
 </script>
 
 <template>
@@ -26,8 +106,13 @@ defineEmits(["closeEditStatus"])
         <input
           type="text"
           id="name"
+          v-model="newStatus.name"
           class="w-full border border-blue-400 rounded-lg py-2 px-3"
+          placeholder="Enter Name here..."
         />
+        <p class="text-red-400">
+          {{ errorStatus.name }}
+        </p>
       </div>
 
       <div class="mb-6">
@@ -36,12 +121,26 @@ defineEmits(["closeEditStatus"])
         >
         <textarea
           id="description"
+          v-model="newStatus.description"
           class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44"
+          :class="
+            newStatus.description
+              ? 'bg-white text-black'
+              : 'italic text-gray-500'
+          "
+          placeholder="No Description Provided"
         ></textarea>
+        <p class="text-red-400">
+          {{ errorStatus.description }}
+        </p>
       </div>
 
       <div class="flex justify-end">
-        <button class="bg-green-400 text-white rounded-lg py-2 px-4 mr-2">
+        <button
+          @click="editStatusSave(newStatus)"
+          class="bg-green-400 text-white rounded-lg py-2 px-4 mr-2 disabled:bg-green-200"
+          :disabled="changeStatus"
+        >
           Save
         </button>
         <button

@@ -1,23 +1,29 @@
 <script setup>
-import { defineProps, defineEmits, ref, computed, watch } from "vue"
-import { addItem } from "../libs/fetchUtils"
+import { defineProps, defineEmits, ref, computed, onMounted } from "vue"
+import { addItem, getItems } from "../libs/fetchUtils"
 import { useTaskStore } from "../stores/taskStore"
+import { useStatusStore } from "@/stores/statusStore"
 
 const { showAdd } = defineProps({
   showAdd: Boolean,
 })
 
+const myStatus = useStatusStore()
+
 const emits = defineEmits(["closeAddModal"])
 
-const selected = ref("NO_STATUS")
-
 const addPass = ref(false)
+
+onMounted(async () => {
+  const statusData = await getItems(`${import.meta.env.VITE_BASE_URL}statuses`)
+  listNewTask.value.status = statusData[0].name
+})
 
 const listNewTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: selected.value,
+  status: "",
 })
 
 const errorTask = ref({
@@ -45,7 +51,7 @@ const saveNewTask = async () => {
   }
 
   const { newTask, statusCode } = await addItem(
-    import.meta.env.VITE_BASE_URL,
+    `${import.meta.env.VITE_BASE_URL}tasks`,
     listNewTask.value
   )
 
@@ -63,13 +69,13 @@ const saveNewTask = async () => {
     listNewTask.value.title = ""
     listNewTask.value.description = ""
     listNewTask.value.assignees = ""
-    listNewTask.value.status = selected.value
+    listNewTask.value.status = ""
     emits("closeAddModal")
 
     addPass.value = true
     setTimeout(() => {
       addPass.value = false
-    }, "4000")
+    }, "1200")
   }
 
   if (statusCode === 400) {
@@ -82,13 +88,16 @@ const closeAddModal = () => {
   listNewTask.value.title = ""
   listNewTask.value.description = ""
   listNewTask.value.assignees = ""
-  listNewTask.value.status = selected.value
+  listNewTask.value.status = ""
 
   // ปิด Modal
   emits("closeAddModal")
 }
 
 const changeTitle = computed(() => {
+  console.log(listNewTask.value.title)
+  console.log(listNewTask.value.status)
+
   const trimmedTitleLength = listNewTask.value.title.trim().length
 
   // ตรวจสอบว่า title มีความยาวมากกว่า 100 หรือมีช่องว่างหรือไม่
@@ -212,10 +221,13 @@ const changeTitle = computed(() => {
             v-model="listNewTask.status"
             class="itbkk-status pl-5 border-2 rounded-md h-10 pr-5"
           >
-            <option value="NO_STATUS">No Status</option>
-            <option value="TO_DO">To Do</option>
-            <option value="DOING">Doing</option>
-            <option value="DONE">Done</option>
+            <option
+              v-for="(status, index) in myStatus.getStatus()"
+              :key="index"
+              :value="status.name"
+            >
+              {{ status.name }}
+            </option>
           </select>
         </div>
 

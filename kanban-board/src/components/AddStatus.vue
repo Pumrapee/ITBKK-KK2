@@ -1,11 +1,81 @@
 <script setup>
-import { defineProps, defineEmits } from "vue"
+import { defineProps, defineEmits, ref, computed } from "vue"
+import { useStatusStore } from "@/stores/statusStore"
+import { addItem } from "@/libs/fetchUtils"
 
 const { showAddStatus } = defineProps({
   showAddStatus: Boolean,
 })
 
-defineEmits(["closeAddStatus"])
+const emits = defineEmits(["closeAddStatus"])
+
+const newStatus = ref({
+  name: "",
+  description: "",
+})
+
+const errorStatus = ref({
+  name: "",
+  description: "",
+})
+
+const myStatus = useStatusStore()
+const saveStatus = async () => {
+  // const oldStatus = myStatus.getStatus()
+  // const checkUnique = newStatus.value.name === oldStatus.name
+  // console.log(checkUnique)
+
+  // Trim
+  newStatus.value.name = newStatus.value.name?.trim()
+  newStatus.value.description = newStatus.value.description?.trim()
+
+  // Replace empty strings with null
+  if (newStatus.value.name === "") {
+    newStatus.value.name = null
+  }
+  if (newStatus.value.description === "") {
+    newStatus.value.description = null
+  }
+
+  const { newTask } = await addItem(
+    `${import.meta.env.VITE_BASE_URL}statuses`,
+    newStatus.value
+  )
+  console.log(newTask)
+
+  myStatus.addOneStatus(newTask.id, newTask.name, newTask.description)
+
+  newStatus.value.name = ""
+  newStatus.value.description = ""
+  emits("closeAddStatus")
+}
+
+const cancleStatus = () => {
+  newStatus.value.name = ""
+  newStatus.value.description = ""
+  emits("closeAddStatus")
+}
+
+const changeStatus = computed(() => {
+  const trimmedNameLength = newStatus.value.name?.trim()?.length
+  if (trimmedNameLength > 50 || trimmedNameLength === 0) {
+    errorStatus.value.name =
+      trimmedNameLength === 0
+        ? "Name is required."
+        : "Name exceeds the limit of 50 characters."
+    return true
+  } else {
+    errorStatus.value.name = ""
+  }
+
+  //ยังไม่ได้
+  newStatus.value.description?.trim()?.length > 200
+    ? (errorStatus.value.description =
+        "Description exceeds the limit of 500 characters.")
+    : (errorStatus.value.description = "")
+  console.log(errorStatus.value.description)
+  return !newStatus.value.name
+})
 </script>
 
 <template>
@@ -25,41 +95,73 @@ defineEmits(["closeAddStatus"])
         >
         <input
           type="text"
+          v-model="newStatus.name"
           id="name"
           class="w-full border border-blue-400 rounded-lg py-2 px-3"
         />
+        <div class="flex justify-between items-center">
+          <p class="text-red-400">
+            {{ errorStatus.name }}
+          </p>
+          <p
+            class="text-gray-300 pb-4 text-sm"
+            :class="{
+              'text-red-400': newStatus.name?.trim()?.length > 50,
+            }"
+          >
+            {{ newStatus.name?.trim()?.length }}/50
+          </p>
+        </div>
       </div>
 
-      <div class="mb-6">
+      <div>
         <label for="description" class="block text-blue-400 font-bold mb-2"
           >Description</label
         >
         <textarea
           id="description"
+          v-model="newStatus.description"
           class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44"
         ></textarea>
+        <div class="flex justify-between items-center">
+          <p class="text-red-400">{{ errorStatus.description }}</p>
+          <p
+            class="text-gray-300 self-end text-sm pb-3"
+            :class="{
+              'text-red-400': newStatus.description?.trim()?.length > 200,
+            }"
+          >
+            {{ newStatus.description?.trim()?.length }}/200
+          </p>
+        </div>
       </div>
 
-      <div class="mb-6 flex">
+      <!-- <div class="mb-6 flex">
         <label for="color" class="block text-blue-400 font-bold mb-2"
           >Color:</label
         >
         <input class="ml-3" type="color" />
-      </div>
+      </div> -->
 
       <div class="flex justify-end">
-        <button class="bg-green-400 text-white rounded-lg py-2 px-4 mr-2">
+        <button
+          @click="saveStatus"
+          class="btn bg-green-400 text-white rounded-lg py-2 px-4 mr-2 disabled:bg-green-200"
+          :disabled="changeStatus"
+        >
           Save
         </button>
         <button
-          @click="$emit('closeAddStatus')"
-          class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4"
+          @click="cancleStatus"
+          class="btn bg-gray-300 text-gray-700 rounded-lg py-2 px-4"
         >
           Cancel
         </button>
       </div>
     </div>
   </div>
+
+  
 </template>
 
 <style scoped></style>

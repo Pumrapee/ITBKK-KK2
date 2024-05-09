@@ -6,7 +6,6 @@ import { useTaskStore } from "../stores/taskStore"
 import router from "@/router"
 import { useModalStore } from "../stores/modal"
 import Delete from "../components/Delete.vue"
-import AlertModel from "../components/AlertModel.vue"
 import { RouterLink } from "vue-router"
 
 const showModal = ref(false)
@@ -28,7 +27,10 @@ const closeModal = () => {
 
 const openModal = async (taskId) => {
   if (taskId) {
-    const data = await getItemById(import.meta.env.VITE_BASE_URL, taskId)
+    const data = await getItemById(
+      `${import.meta.env.VITE_BASE_URL}tasks`,
+      taskId
+    )
     if (data.status === 404) {
       //require PBI2
       // alert("The requested task does not exist")
@@ -36,7 +38,7 @@ const openModal = async (taskId) => {
       editFail.value = true
       setTimeout(() => {
         editFail.value = false
-      }, "4000")
+      }, "1200")
       mytasks.removeTasks(modal.deleteId)
       router.go(-1)
     } else {
@@ -46,15 +48,15 @@ const openModal = async (taskId) => {
   }
 }
 
-const reformat = (status) => {
-  const statusMap = {
-    NO_STATUS: "No Status",
-    TO_DO: "To Do",
-    DOING: "Doing",
-    DONE: "Done",
-  }
-  return statusMap[status] || status // ถ้าไม่มีค่าใน statusMap ให้ใช้ค่าเดิม
-}
+// const reformat = (status) => {
+//   const statusMap = {
+//     NO_STATUS: "No Status",
+//     TO_DO: "To Do",
+//     DOING: "Doing",
+//     DONE: "Done",
+//   }
+//   return statusMap[status] || status // ถ้าไม่มีค่าใน statusMap ให้ใช้ค่าเดิม
+// }
 
 const openDeleteModal = (id, title, index) => {
   modal.showDelete = true // เปิด Modal Delete
@@ -143,20 +145,8 @@ const openDeleteModal = (id, title, index) => {
               <p v-else class="text-gray-500 font-medium">Unassigned</p>
             </td>
             <td class="itbkk-status pl-20">
-              <div
-                class="border rounded-md p-2 text-white w-24"
-                :class="{
-                  'bg-gray-400 font-semibold':
-                    reformat(task.status) === 'No Status',
-                  'bg-yellow-400 font-semibold':
-                    reformat(task.status) === 'To Do',
-                  'bg-purple-400 font-semibold':
-                    reformat(task.status) === 'Doing',
-                  'bg-green-400 font-semibold':
-                    reformat(task.status) === 'Done',
-                }"
-              >
-                {{ reformat(task.status) }}
+              <div class="border rounded-md p-2 text-black w-24">
+                {{ task.status }}
               </div>
             </td>
             <td>
@@ -180,8 +170,6 @@ const openDeleteModal = (id, title, index) => {
       </table>
     </div>
   </div>
-
-  <!-- Alert -->
 </template>
 
 <style scoped>

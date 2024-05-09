@@ -16,7 +16,7 @@ const { showDelete } = defineProps({
 
 const confirmDelete = async () => {
   const deleteItem = await deleteItemById(
-    import.meta.env.VITE_BASE_URL,
+    `${import.meta.env.VITE_BASE_URL}tasks`,
     modal.deleteId
   )
 
@@ -26,14 +26,14 @@ const confirmDelete = async () => {
     modal.showDelete = false
     setTimeout(() => {
       deletePass.value = false
-    }, "4000")
+    }, "1200")
   } else if (deleteItem === 404) {
     mytasks.removeTasks(modal.deleteId)
     deleteFail.value = true
     modal.showDelete = false
     setTimeout(() => {
       deletePass.value = false
-    }, "4000")
+    }, "1200")
   }
 }
 
@@ -69,11 +69,7 @@ const closeFailDelete = () => {
       </svg>
 
       <span class="itbkk-message"
-        >The task
-        <span class="font-semibold text-red-500 break-all ..."
-          >"{{ modal.deleteTitle }}"</span
-        >
-        has been <span class="font-semibold text-red-500">deleted</span></span
+        >The task has been <span class="font-semibold text-red-500">deleted</span></span
       >
 
       <button @click="deletePass = false">X</button>

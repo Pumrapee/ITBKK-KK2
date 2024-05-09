@@ -1,15 +1,21 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { ref } from "vue"
 import { useTaskStore } from "../stores/taskStore"
-import dataStatus from "../../data/task.json"
+import { useStatusStore } from "../stores/statusStore"
+// import dataStatus from "../../data/task.json"
 import AddStatus from "./AddStatus.vue"
 import EditStatus from "./EditStatus.vue"
+import router from "@/router"
+import { getItemById } from "../libs/fetchUtils"
 
 const myTask = useTaskStore()
+const myStatus = useStatusStore()
 const showAddModal = ref(false)
 const showEditModal = ref(false)
+const statusItems = ref()
 myTask.showNavbar = false
 
+console.log(myStatus.getStatus())
 const openAddStatus = () => {
   showAddModal.value = true
 }
@@ -17,10 +23,19 @@ const openAddStatus = () => {
 const closeModal = () => {
   showAddModal.value = false
   showEditModal.value = false
+  router.go(-1)
 }
 
-const openEditStatus = () => {
-  showEditModal.value = true
+const openEditStatus = async (idStatus) => {
+  if (idStatus) {
+    const statusItem = await getItemById(
+      `${import.meta.env.VITE_BASE_URL}statuses`,
+      idStatus
+    )
+    statusItems.value = statusItem
+    showEditModal.value = true
+    console.log(statusItem)
+  }
 }
 </script>
 
@@ -34,7 +49,9 @@ const openEditStatus = () => {
           <li>Task Status</li>
         </ul>
       </div>
-      <button @click="openAddStatus" class="btn">Add status</button>
+      <RouterLink :to="{ name: 'AddStatus' }">
+        <button @click="openAddStatus" class="btn">Add status</button>
+      </RouterLink>
     </div>
 
     <!-- Task Table -->
@@ -50,7 +67,7 @@ const openEditStatus = () => {
         </thead>
         <tbody class="bg-white">
           <tr
-            v-for="(task, index) in dataStatus.status"
+            v-for="(task, index) in myStatus.getStatus()"
             :key="task.id"
             class="itbkk-item"
           >
@@ -58,7 +75,7 @@ const openEditStatus = () => {
 
             <td class="pl-20 w-1/3">
               <p class="h-5 font-medium" style="text-align: left">
-                {{ task.status }}
+                {{ task.name }}
               </p>
             </td>
 
@@ -72,32 +89,38 @@ const openEditStatus = () => {
               <p v-else class="text-gray-500 font-medium">Unassigned</p>
             </td>
 
-            <td>
-              <div class="ml-10 flex">
-                <div class="mr-2">
-                  <RouterLink :to="{ name: 'EditStatus' }">
-                    <button
-                      @click="openEditStatus(task.id)"
-                      class="btn btn-ghost h-auto bg-yellow-100"
-                    >
-                      <img src="/icons/pen.png" class="w-4" />
-                    </button>
-                  </RouterLink>
-                </div>
-                <div>
-                  <button class="itbkk-button-delete btn bg-red-500">
-                    <img src="/icons/delete.png" class="w-4" />
+            <!-- ใส่ v-if เพื่อตรวจสอบว่า index เท่ากับ 0 หรือไม่ -->
+            <td v-if="index !== 0" class="ml-10 flex">
+              <div class="mr-2">
+                <router-link
+                  :to="{ name: 'EditStatus', params: { id: task.id } }"
+                >
+                  <button
+                    @click="openEditStatus(task.id)"
+                    class="btn btn-ghost h-auto bg-yellow-100"
+                  >
+                    <img src="/icons/pen.png" class="w-4" />
                   </button>
-                </div>
+                </router-link>
+              </div>
+              <div>
+                <button class="itbkk-button-delete btn bg-red-500">
+                  <img src="/icons/delete.png" class="w-4" />
+                </button>
               </div>
             </td>
+            <td v-else="index === 0" class="h-20"></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <EditStatus :showEditStatus="showEditModal" @closeEditStatus="closeModal" />
+  <EditStatus
+    :showEditStatus="showEditModal"
+    @closeEditStatus="closeModal"
+    :taskStatus="statusItems"
+  />
   <AddStatus :showAddStatus="showAddModal" @closeAddStatus="closeModal" />
 </template>
 

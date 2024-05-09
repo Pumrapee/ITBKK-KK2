@@ -7,7 +7,6 @@ import { useTaskStore } from "../stores/taskStore"
 
 const myTask = useTaskStore()
 const showAdd = ref()
-const showButtons = ref(true) // เริ่มต้นแสดงปุ่ม
 
 const showModalAdd = () => {
   showAdd.value = true

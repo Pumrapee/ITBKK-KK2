@@ -2,6 +2,7 @@
 import { ref, defineProps, defineEmits, computed, watch } from "vue"
 import { editItem } from "../libs/fetchUtils"
 import { useTaskStore } from "@/stores/taskStore"
+import { useStatusStore } from "@/stores/statusStore"
 
 const props = defineProps({
   showModal: Boolean,
@@ -10,11 +11,14 @@ const props = defineProps({
 const emits = defineEmits(["closeModal"])
 const editPass = ref(false)
 const newTask = ref({})
+const myStatus = useStatusStore()
 const errorTask = ref({
   title: "",
   description: "",
   assignees: "",
 })
+
+console.log(newTask.value.status)
 
 const changeTask = computed(() => {
   const trimAndCheckNull = (value) => {
@@ -77,7 +81,7 @@ const editSave = async (task) => {
   }
 
   const { editedItem, statusCode } = await editItem(
-    import.meta.env.VITE_BASE_URL,
+    `${import.meta.env.VITE_BASE_URL}tasks`,
     editedTask.id,
     {
       title: editedTask.title,
@@ -102,7 +106,7 @@ const editSave = async (task) => {
     editPass.value = true
     setTimeout(() => {
       editPass.value = false
-    }, "4000")
+    }, "1200")
   }
   if (statusCode === 400) {
     alert("There are some fields that exceed the limit.")
@@ -194,10 +198,13 @@ watch(props, () => {
             v-model="newTask.status"
             class="itbkk-status pl-5 border-2 rounded-md h-10 pr-5"
           >
-            <option value="NO_STATUS">No Status</option>
-            <option value="TO_DO">To Do</option>
-            <option value="DOING">Doing</option>
-            <option value="DONE">Done</option>
+            <option
+              v-for="(status, index) in myStatus.getStatus()"
+              :key="index"
+              :value="status.name"
+            >
+              {{ status.name }}
+            </option>
           </select>
         </div>
 

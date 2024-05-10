@@ -7,12 +7,14 @@ import AddStatus from "./AddStatus.vue"
 import EditStatus from "./EditStatus.vue"
 import router from "@/router"
 import { getItemById } from "../libs/fetchUtils"
+import AlertComponent from "./Alert.vue"
 
 const myTask = useTaskStore()
 const myStatus = useStatusStore()
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const statusItems = ref()
+const modalAlert = ref({ message: "", type: "", modal: false })
 myTask.showNavbar = false
 
 console.log(myStatus.getStatus())
@@ -20,10 +22,73 @@ const openAddStatus = () => {
   showAddModal.value = true
 }
 
-const closeModal = () => {
+const closeCancle = () => {
   showAddModal.value = false
   showEditModal.value = false
   router.go(-1)
+}
+
+const closeAddModal = (statusCode) => {
+  if (statusCode === 201) {
+    showAddModal.value = false
+    router.go(-1)
+    modalAlert.value = {
+      message: "The status has been added",
+      type: "success",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  } else {
+    modalAlert.value = {
+      message: "An error has occurred, the status could not be added.",
+      type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+}
+
+const closeEditModal = (statusCode) => {
+  if (statusCode === 200) {
+    showEditModal.value = false
+    router.go(-1)
+    modalAlert.value = {
+      message: "The status has been updated",
+      type: "success",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+
+  if (statusCode === 400) {
+    modalAlert.value = {
+      message: "There are some fields that exceed the limit.",
+      type: "warning",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+
+  if (statusCode === 404) {
+    showEditModal.value = false
+    router.go(-1)
+    modalAlert.value = {
+      message: "An error has occurred, the status does not exist.",
+      type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
 }
 
 const openEditStatus = async (idStatus) => {
@@ -32,9 +97,22 @@ const openEditStatus = async (idStatus) => {
       `${import.meta.env.VITE_BASE_URL}statuses`,
       idStatus
     )
-    statusItems.value = statusItem
-    showEditModal.value = true
-    console.log(statusItem)
+    if (statusItem.status === 404) {
+      modalAlert.value = {
+        message: "An error has occurred, the status does not exist.",
+        type: "error",
+        modal: true,
+      }
+      setTimeout(() => {
+        modalAlert.value.modal = false
+      }, "2500")
+      myStatus.removeStatus(idStatus)
+      router.go(-1)
+    } else {
+      statusItems.value = statusItem
+      showEditModal.value = true
+      console.log(statusItem)
+    }
   }
 }
 </script>
@@ -118,10 +196,20 @@ const openEditStatus = async (idStatus) => {
 
   <EditStatus
     :showEditStatus="showEditModal"
-    @closeEditStatus="closeModal"
+    @closeEditStatus="closeEditModal"
+    @closeCancleStatus="closeCancle"
     :taskStatus="statusItems"
   />
-  <AddStatus :showAddStatus="showAddModal" @closeAddStatus="closeModal" />
+  <AddStatus
+    :showAddStatus="showAddModal"
+    @closeAddStatus="closeAddModal"
+    @closeCancleStatus="closeCancle"
+  />
+  <AlertComponent
+    :message="modalAlert.message"
+    :type="modalAlert.type"
+    :showAlert="modalAlert.modal"
+  />
 </template>
 
 <style scoped></style>

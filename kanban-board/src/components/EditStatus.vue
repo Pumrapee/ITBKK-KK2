@@ -8,7 +8,7 @@ const props = defineProps({
   showEditStatus: Boolean,
   taskStatus: Object,
 })
-const emits = defineEmits(["closeEditStatus"])
+const emits = defineEmits(["closeEditStatus", "closeCancleStatus"])
 
 const newStatus = ref({})
 const myStatus = useStatusStore()
@@ -77,7 +77,16 @@ const editStatusSave = async (status) => {
       editedItem.name,
       editedItem.description
     )
-    emits("closeEditStatus")
+    emits("closeEditStatus", statusCode)
+  }
+
+  if (statusCode === 400) {
+    emits("closeEditStatus", statusCode)
+  }
+
+  if (statusCode === 404) {
+    emits("closeEditStatus", statusCode)
+    myStatus.removeStatus(editedItem.id)
   }
 }
 
@@ -144,7 +153,7 @@ watch(props, () => {
           Save
         </button>
         <button
-          @click="$emit('closeEditStatus')"
+          @click="$emit('closeCancleStatus')"
           class="bg-gray-300 text-gray-700 rounded-lg py-2 px-4"
         >
           Cancel

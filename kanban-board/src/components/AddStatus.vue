@@ -7,7 +7,7 @@ const { showAddStatus } = defineProps({
   showAddStatus: Boolean,
 })
 
-const emits = defineEmits(["closeAddStatus"])
+const emits = defineEmits(["closeAddStatus", "closeCancleStatus"])
 
 const newStatus = ref({
   name: "",
@@ -21,6 +21,7 @@ const errorStatus = ref({
 
 const myStatus = useStatusStore()
 const saveStatus = async () => {
+  // Unique
   // const oldStatus = myStatus.getStatus()
   // const checkUnique = newStatus.value.name === oldStatus.name
   // console.log(checkUnique)
@@ -37,23 +38,27 @@ const saveStatus = async () => {
     newStatus.value.description = null
   }
 
-  const { newTask } = await addItem(
+  const { newTask, statusCode } = await addItem(
     `${import.meta.env.VITE_BASE_URL}statuses`,
     newStatus.value
   )
-  console.log(newTask)
 
-  myStatus.addOneStatus(newTask.id, newTask.name, newTask.description)
+  if (statusCode === 201) {
+    myStatus.addOneStatus(newTask.id, newTask.name, newTask.description)
 
-  newStatus.value.name = ""
-  newStatus.value.description = ""
-  emits("closeAddStatus")
+    newStatus.value.name = ""
+    newStatus.value.description = ""
+    emits("closeAddStatus", statusCode)
+  }
+  if (statusCode === 400 || statusCode === 500) {
+    emits("closeAddStatus", statusCode)
+  }
 }
 
 const cancleStatus = () => {
   newStatus.value.name = ""
   newStatus.value.description = ""
-  emits("closeAddStatus")
+  emits("closeCancleStatus")
 }
 
 const changeStatus = computed(() => {
@@ -68,10 +73,10 @@ const changeStatus = computed(() => {
     errorStatus.value.name = ""
   }
 
-  //ยังไม่ได้
+  //ยังไม่ได้ ต้องพิม name ก่อนถึงจะขึ้น
   newStatus.value.description?.trim()?.length > 200
     ? (errorStatus.value.description =
-        "Description exceeds the limit of 500 characters.")
+        "Description exceeds the limit of 200 characters.")
     : (errorStatus.value.description = "")
   console.log(errorStatus.value.description)
   return !newStatus.value.name
@@ -160,8 +165,6 @@ const changeStatus = computed(() => {
       </div>
     </div>
   </div>
-
-  
 </template>
 
 <style scoped></style>

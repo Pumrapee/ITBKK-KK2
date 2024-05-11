@@ -3,12 +3,11 @@ import { ref, defineProps } from "vue"
 import { useModalStore } from "../stores/modal"
 import { useTaskStore } from "@/stores/taskStore"
 import { deleteItemById } from "../libs/fetchUtils"
+import AlertComponent from "./Alert.vue"
 
 const modal = useModalStore()
 const mytasks = useTaskStore()
-
-const deletePass = ref(false)
-const deleteFail = ref(false)
+const modalAlert = ref({ message: "", type: "", modal: false })
 
 const { showDelete } = defineProps({
   showDelete: Boolean,
@@ -22,87 +21,41 @@ const confirmDelete = async () => {
 
   if (deleteItem === 200) {
     mytasks.removeTasks(modal.deleteId)
-    deletePass.value = true
     modal.showDelete = false
+    modalAlert.value = {
+      message: "The task has been deleted",
+      type: "success",
+      modal: true,
+    }
     setTimeout(() => {
-      deletePass.value = false
-    }, "1200")
+      modalAlert.value.modal = false
+    }, "2500")
   } else if (deleteItem === 404) {
     mytasks.removeTasks(modal.deleteId)
-    deleteFail.value = true
     modal.showDelete = false
+    modalAlert.value = {
+      message: "An error has occurred, the task does not exist.",
+      type: "error",
+      modal: true,
+    }
     setTimeout(() => {
-      deletePass.value = false
-    }, "1200")
+      modalAlert.value.modal = false
+    }, "2500")
   }
 }
 
 const cancelDelete = () => {
   modal.showDelete = false
 }
-
-const closeFailDelete = () => {
-  deleteFail.value = false
-}
 </script>
 
 <template>
-  <!-- Alert pass -->
-  <div
-    v-show="deletePass"
-    class="fixed bottom-6 right-4 mb-0 mr-1"
-    style="z-index: 100"
-  >
-    <div role="alert" class="alert shadow-lg w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-
-      <span class="itbkk-message"
-        >The task has been <span class="font-semibold text-red-500">deleted</span></span
-      >
-
-      <button @click="deletePass = false">X</button>
-    </div>
-  </div>
-
-  <!-- Alert fail -->
-  <div
-    v-if="deleteFail"
-    class="fixed bottom-6 right-4 mb-0 mr-1"
-    style="z-index: 100"
-  >
-    <div role="alert" class="alert alert-error shadow-lg w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span class="itbkk-message text-white"
-        >An error has occurred, the task does not exist.</span
-      >
-      <button class="text-white" @click="closeFailDelete()">X</button>
-    </div>
-  </div>
-
+  <!-- Alert -->
+  <AlertComponent
+    :message="modalAlert.message"
+    :type="modalAlert.type"
+    :showAlert="modalAlert.modal"
+  />
   <!-- Modal Delete -->
   <div v-if="modal.showDelete" class="fixed z-10 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen bg-black/[.15]">

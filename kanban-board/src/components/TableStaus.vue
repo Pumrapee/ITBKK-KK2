@@ -187,6 +187,7 @@ const openEditStatus = async (idStatus) => {
                 </button>
               </div>
             </td>
+            <!-- ถ้า index = 0 ไม่ขึ้น icon -->
             <td v-else="index === 0" class="h-20"></td>
           </tr>
         </tbody>

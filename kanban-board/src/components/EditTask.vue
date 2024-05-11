@@ -8,8 +8,7 @@ const props = defineProps({
   showModal: Boolean,
   task: Object,
 })
-const emits = defineEmits(["closeModal"])
-const editPass = ref(false)
+const emits = defineEmits(["closeModal", "closeEditTask"])
 const newTask = ref({})
 const myStatus = useStatusStore()
 const errorTask = ref({
@@ -32,13 +31,17 @@ const changeTask = computed(() => {
     title: props.task.title,
     description: props.task.description,
     assignees: props.task.assignees,
-    status: props.task.status,
+    status: props.task.status.name,
   }
+
+  console.log(oldTask.status)
 
   const newTitle = trimAndCheckNull(newTask.value.title)
   const newDescription = trimAndCheckNull(newTask.value.description)
   const newAssignees = trimAndCheckNull(newTask.value.assignees)
   const newStatus = newTask.value.status
+
+  console.log(newStatus)
 
   newTask.value.title?.length > 100
     ? (errorTask.value.title = "Title exceeds the limit of 100 characters.")
@@ -102,17 +105,13 @@ const editSave = async (task) => {
       editedItem.updatedTime
     )
 
-    emits("closeModal")
-    editPass.value = true
-    setTimeout(() => {
-      editPass.value = false
-    }, "1200")
+    emits("closeEditTask", statusCode)
   }
   if (statusCode === 400) {
-    alert("There are some fields that exceed the limit.")
+    emits("closeEditTask", statusCode)
   }
   if (statusCode === 404) {
-    alert("This task is deleted!!. Can not update")
+    emits("closeEditTask", statusCode)
   }
 }
 
@@ -124,30 +123,6 @@ watch(props, () => {
 </script>
 
 <template>
-  <!-- Alert Pass Edit-->
-  <div
-    v-if="editPass"
-    class="fixed bottom-6 right-4 mb-0 mr-1"
-    style="z-index: 100"
-  >
-    <div role="alert" class="alert alert-success shadow-lg w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span class="itbkk-message text-white">The task has been updated</span>
-      <button class="text-white" @click="editPass = false">X</button>
-    </div>
-  </div>
 
   <!-- Modal window -->
   <div v-if="showModal" class="fixed z-10 inset-0 overflow-y-auto">

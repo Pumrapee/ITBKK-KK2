@@ -7,8 +7,9 @@ import router from "@/router"
 import { useModalStore } from "../stores/modal"
 import Delete from "../components/Delete.vue"
 import { RouterLink } from "vue-router"
+import AlertComponent from "./Alert.vue"
 
-const showModal = ref(false)
+const showEditModal = ref(false)
 const task = ref()
 const mytasks = useTaskStore()
 
@@ -18,11 +19,38 @@ const myTask = useTaskStore()
 
 const modal = useModalStore()
 
+const modalAlert = ref({ message: "", type: "", modal: false })
+console.log(myTask.getTasks())
 myTask.showNavbar = true
 
-const closeModal = () => {
-  showModal.value = false
+const closeCancle = () => {
+  showEditModal.value = false
   router.go(-1)
+}
+const closeEditModal = (statusCode) => {
+  if (statusCode === 200) {
+    showEditModal.value = false
+    router.go(-1)
+    modalAlert.value = {
+      message: "The task has been updated",
+      type: "success",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+
+  if (statusCode === 400) {
+    modalAlert.value = {
+      message: "There are some fields that exceed the limit.",
+      type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
 }
 
 const openModal = async (taskId) => {
@@ -43,7 +71,7 @@ const openModal = async (taskId) => {
       router.go(-1)
     } else {
       task.value = data
-      showModal.value = true
+      showEditModal.value = true
     }
   }
 }
@@ -67,35 +95,13 @@ const openDeleteModal = (id, title, index) => {
 </script>
 
 <template>
-  <EditTask @closeModal="closeModal" :showModal="showModal" :task="task" />
+  <EditTask
+    @closeModal="closeCancle"
+    @closeEditTask="closeEditModal"
+    :showModal="showEditModal"
+    :task="task"
+  />
   <Delete />
-
-  <!-- Alert fail Edit-->
-  <div
-    v-if="editFail"
-    class="fixed bottom-6 right-4 mb-0 mr-1"
-    style="z-index: 100"
-  >
-    <div role="alert" class="alert alert-error w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span class="itbkk-message text-white"
-        >An error has occurred, the task does not exist.</span
-      >
-      <button class="text-white" @click="editFail = false">X</button>
-    </div>
-  </div>
 
   <!-- Task Table -->
   <div class="flex flex-col items-center mt-16 mb-20">
@@ -170,6 +176,13 @@ const openDeleteModal = (id, title, index) => {
       </table>
     </div>
   </div>
+
+  <!-- Alert -->
+  <AlertComponent
+    :message="modalAlert.message"
+    :type="modalAlert.type"
+    :showAlert="modalAlert.modal"
+  />
 </template>
 
 <style scoped>

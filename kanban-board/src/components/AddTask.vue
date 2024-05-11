@@ -1,5 +1,11 @@
 <script setup>
-import { defineProps, defineEmits, ref, computed, onMounted } from "vue"
+import {
+  defineProps,
+  defineEmits,
+  ref,
+  computed,
+  onMounted,
+} from "vue"
 import { addItem, getItems } from "../libs/fetchUtils"
 import { useTaskStore } from "../stores/taskStore"
 import { useStatusStore } from "@/stores/statusStore"
@@ -10,20 +16,21 @@ const { showAdd } = defineProps({
 
 const myStatus = useStatusStore()
 
-const emits = defineEmits(["closeAddModal"])
+const emits = defineEmits(["closeAddModal", "closeCancle"])
 
-const addPass = ref(false)
+const selected = ref()
 
+//ค่า default เปลี่ยนตามที่เลือก
 onMounted(async () => {
   const statusData = await getItems(`${import.meta.env.VITE_BASE_URL}statuses`)
-  listNewTask.value.status = statusData[0].name
+  selected.value = statusData[0].name
 })
 
 const listNewTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: "",
+  status: selected,
 })
 
 const errorTask = ref({
@@ -69,29 +76,22 @@ const saveNewTask = async () => {
     listNewTask.value.title = ""
     listNewTask.value.description = ""
     listNewTask.value.assignees = ""
-    listNewTask.value.status = ""
-    emits("closeAddModal")
-
-    addPass.value = true
-    setTimeout(() => {
-      addPass.value = false
-    }, "1200")
+    emits("closeAddModal", statusCode)
   }
 
   if (statusCode === 400) {
-    alert("There are some fields that exceed the limit.")
+    emits("closeAddModal", statusCode)
   }
 }
 
-const closeAddModal = () => {
+const cancleModal = () => {
   // ทำการเคลียร์ค่าในฟอร์ม
   listNewTask.value.title = ""
   listNewTask.value.description = ""
   listNewTask.value.assignees = ""
-  listNewTask.value.status = ""
 
   // ปิด Modal
-  emits("closeAddModal")
+  emits("closeCancle")
 }
 
 const changeTitle = computed(() => {
@@ -127,31 +127,6 @@ const changeTitle = computed(() => {
 </script>
 
 <template>
-  <!-- Alert Pass Add-->
-  <div
-    v-show="addPass"
-    class="fixed bottom-6 right-4 mb-0 mr-1"
-    style="z-index: 100"
-  >
-    <div role="alert" class="alert alert-success shadow-lg w-auto">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <span class="text-white">The task has been successfully added!!</span>
-      <button class="text-white" @click="addPass = false">X</button>
-    </div>
-  </div>
-
   <!-- Modal window -->
   <div v-if="showAdd" class="fixed z-10 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen bg-black/[.15]">
@@ -247,7 +222,7 @@ const changeTitle = computed(() => {
           >
             Save
           </button>
-          <button class="itbkk-button-cancel btn" @click="closeAddModal">
+          <button class="itbkk-button-cancel btn" @click="cancleModal">
             Close
           </button>
         </div>

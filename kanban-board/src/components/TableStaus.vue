@@ -2,19 +2,23 @@
 import { ref } from "vue"
 import { useTaskStore } from "../stores/taskStore"
 import { useStatusStore } from "../stores/statusStore"
-// import dataStatus from "../../data/task.json"
+import { useModalStore } from "@/stores/modal"
 import AddStatus from "./AddStatus.vue"
 import EditStatus from "./EditStatus.vue"
 import router from "@/router"
 import { getItemById } from "../libs/fetchUtils"
 import AlertComponent from "./Alert.vue"
+import DeleteStatus from "./DeleteStatus.vue"
 
 const myTask = useTaskStore()
 const myStatus = useStatusStore()
+const modal = useModalStore()
 const showAddModal = ref(false)
 const showEditModal = ref(false)
+const showDeleteModal = ref(false)
 const statusItems = ref()
 const modalAlert = ref({ message: "", type: "", modal: false })
+
 myTask.showNavbar = false
 
 console.log(myStatus.getStatus())
@@ -22,10 +26,22 @@ const openAddStatus = () => {
   showAddModal.value = true
 }
 
+const openDeleteStatus = (id, name) => {
+  showDeleteModal.value = true
+
+  
+  modal.deleteId = id
+  modal.deleteName = name
+}
+
 const closeCancle = () => {
-  showAddModal.value = false
-  showEditModal.value = false
-  router.go(-1)
+  if (showDeleteModal.value === true) {
+    showDeleteModal.value = false
+  } else {
+    showAddModal.value = false
+    showEditModal.value = false
+    router.go(-1)
+  }
 }
 
 const closeAddModal = (statusCode) => {
@@ -89,6 +105,10 @@ const closeEditModal = (statusCode) => {
       modalAlert.value.modal = false
     }, "2500")
   }
+}
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
 }
 
 const openEditStatus = async (idStatus) => {
@@ -182,7 +202,10 @@ const openEditStatus = async (idStatus) => {
                 </router-link>
               </div>
               <div>
-                <button class="itbkk-button-delete btn bg-red-500">
+                <button
+                  class="itbkk-button-delete btn bg-red-500"
+                  @click="openDeleteStatus(task.id, task.name)"
+                >
                   <img src="/icons/delete.png" class="w-4" />
                 </button>
               </div>
@@ -205,6 +228,11 @@ const openEditStatus = async (idStatus) => {
     :showAddStatus="showAddModal"
     @closeAddStatus="closeAddModal"
     @closeCancleStatus="closeCancle"
+  />
+  <DeleteStatus
+    :showDeleteStatus="showDeleteModal"
+    @closeCancle="closeCancle"
+    @closeDeleteStatus="closeDeleteModal"
   />
   <AlertComponent
     :message="modalAlert.message"

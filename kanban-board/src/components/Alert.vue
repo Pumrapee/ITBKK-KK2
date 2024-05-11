@@ -31,7 +31,7 @@ const props = defineProps({
       <svg
         v-if="type === 'error'"
         xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
+        class="stroke-current shrink-0 h-6 w-6 text-white"
         fill="none"
         viewBox="0 0 24 24"
       >
@@ -45,7 +45,7 @@ const props = defineProps({
       <svg
         v-if="type === 'warning'"
         xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current shrink-0 h-6 w-6"
+        class="stroke-current shrink-0 h-6 w-6 text-white"
         fill="none"
         viewBox="0 0 24 24"
       >
@@ -64,5 +64,11 @@ const props = defineProps({
 <style scoped>
 .alert-warning {
   background-color: rgb(255, 204, 0);
+}
+.alert-success {
+  background-color: rgb(65, 202, 50);
+}
+.alert-error {
+  background-color: rgb(219, 63, 63);
 }
 </style>

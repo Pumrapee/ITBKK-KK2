@@ -13,17 +13,13 @@ const myStatus = useStatusStore()
 const emits = defineEmits(["closeAddModal", "closeCancle"])
 
 const selected = ref()
-
-onMounted(async () => {
-  const statusData = await getItems(`${import.meta.env.VITE_BASE_URL}statuses`)
-  selected.value = statusData[0].name
-})
+selected.value = "No Status"
 
 const listNewTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: selected,
+  status: selected.value,
 })
 
 const errorTask = ref({
@@ -69,6 +65,7 @@ const saveNewTask = async () => {
     listNewTask.value.title = ""
     listNewTask.value.description = ""
     listNewTask.value.assignees = ""
+    listNewTask.value.status = selected.value
     emits("closeAddModal", statusCode)
   }
 
@@ -82,6 +79,7 @@ const cancleModal = () => {
   listNewTask.value.title = ""
   listNewTask.value.description = ""
   listNewTask.value.assignees = ""
+  listNewTask.value.status = selected.value
 
   // ปิด Modal
   emits("closeCancle")
@@ -158,7 +156,7 @@ const changeTitle = computed(() => {
               id="description"
               v-model="listNewTask.description"
               placeholder="Enter description here"
-              class="itbkk-description w-full border border-blue-400 rounded-lg py-3 px-3 h-72 textarea textarea-ghost"
+              class="itbkk-description w-full border border-blue-400 rounded-lg py-3 px-3 h-72 textarea textarea-ghost resize-none"
             ></textarea>
             <p
               class="text-gray-300 text-sm text-end"

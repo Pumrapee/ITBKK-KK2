@@ -60,13 +60,14 @@ const openModal = async (taskId) => {
       taskId
     )
     if (data.status === 404) {
-      //require PBI2
-      // alert("The requested task does not exist")
-      //require PBI5
-      editFail.value = true
+      modalAlert.value = {
+        message: "An error has occurred, the task does not exist.",
+        type: "error",
+        modal: true,
+      }
       setTimeout(() => {
-        editFail.value = false
-      }, "1200")
+        modalAlert.value.modal = false
+      }, "2500")
       mytasks.removeTasks(modal.deleteId)
       router.go(-1)
     } else {
@@ -75,16 +76,6 @@ const openModal = async (taskId) => {
     }
   }
 }
-
-// const reformat = (status) => {
-//   const statusMap = {
-//     NO_STATUS: "No Status",
-//     TO_DO: "To Do",
-//     DOING: "Doing",
-//     DONE: "Done",
-//   }
-//   return statusMap[status] || status // ถ้าไม่มีค่าใน statusMap ให้ใช้ค่าเดิม
-// }
 
 const openDeleteModal = (id, title, index) => {
   modal.showDelete = true // เปิด Modal Delete

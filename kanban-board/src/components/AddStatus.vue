@@ -143,12 +143,12 @@ const changeStatus = computed(() => {
         </div>
       </div>
 
-      <div class="mb-6 flex">
+      <!-- <div class="mb-6 flex">
         <label for="color" class="block text-blue-400 font-bold mb-2"
           >Color:</label
         >
         <input v-model="color" class="ml-3" type="color" />
-      </div>
+      </div> -->
 
       <div class="flex justify-end">
         <button

@@ -27,6 +27,16 @@ async function deleteItemById(url, id) {
   } catch (error) {}
 }
 
+async function deleteItemByIdToNewId(url, oldId, newId) {
+  //DELETE Method
+  try {
+    const res = await fetch(`${url}/${oldId}/${newId}`, {
+      method: "DELETE",
+    })
+    return res.status
+  } catch (error) {}
+}
+
 async function addItem(url, newItem) {
   try {
     const res = await fetch(url, {
@@ -65,4 +75,11 @@ async function editItem(url, id, editItem) {
   } catch (error) {}
 }
 
-export { getItems, getItemById, deleteItemById, addItem, editItem }
+export {
+  getItems,
+  getItemById,
+  deleteItemById,
+  addItem,
+  editItem,
+  deleteItemByIdToNewId,
+}

@@ -18,6 +18,8 @@ const errorStatus = ref({
   name: "",
   description: "",
 })
+const color = ref("")
+console.log(color)
 
 const myStatus = useStatusStore()
 const saveStatus = async () => {
@@ -102,7 +104,7 @@ const changeStatus = computed(() => {
           type="text"
           v-model="newStatus.name"
           id="name"
-          class="w-full border border-blue-400 rounded-lg py-2 px-3"
+          class="w-full border border-blue-400 rounded-lg py-2 px-3 input input-ghost"
         />
         <div class="flex justify-between items-center">
           <p class="text-red-400">
@@ -126,7 +128,7 @@ const changeStatus = computed(() => {
         <textarea
           id="description"
           v-model="newStatus.description"
-          class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44"
+          class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44 textarea textarea-ghost"
         ></textarea>
         <div class="flex justify-between items-center">
           <p class="text-red-400">{{ errorStatus.description }}</p>
@@ -141,12 +143,12 @@ const changeStatus = computed(() => {
         </div>
       </div>
 
-      <!-- <div class="mb-6 flex">
+      <div class="mb-6 flex">
         <label for="color" class="block text-blue-400 font-bold mb-2"
           >Color:</label
         >
-        <input class="ml-3" type="color" />
-      </div> -->
+        <input v-model="color" class="ml-3" type="color" />
+      </div>
 
       <div class="flex justify-end">
         <button

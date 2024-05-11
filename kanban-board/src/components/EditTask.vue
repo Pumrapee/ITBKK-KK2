@@ -31,7 +31,7 @@ const changeTask = computed(() => {
     title: props.task.title,
     description: props.task.description,
     assignees: props.task.assignees,
-    status: props.task.status.name,
+    status: props.task.status,
   }
 
   console.log(oldTask.status)
@@ -123,99 +123,121 @@ watch(props, () => {
 </script>
 
 <template>
-
   <!-- Modal window -->
   <div v-if="showModal" class="fixed z-10 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen bg-black/[.15]">
-      <div
-        class="grid grid-rows-6 grid-cols-4 gap-2 bg-white p-10 rounded-lg w-3/3"
-      >
-        <input
-          type="text"
-          className="itbkk-title input pl-2 col-span-4 font-semibold text-3xl text-blue-400 rounded-lg "
-          v-model="newTask.title"
-          placeholder="Enter Title here..."
-        />
-
-        <div class="border-2 border-blue-400 row-span-4 col-span-3 rounded-lg">
-          <p class="p-5 font-bold text-blue-400">Description</p>
-          <textarea
-            v-model="newTask.description"
-            class="itbkk-description textarea textarea-ghost p-4 h-3/5 w-11/12 ml-9"
-            :class="
-              newTask.description
-                ? 'bg-white text-black'
-                : 'italic text-gray-500'
-            "
-            placeholder="No Description Provided"
-          ></textarea>
-        </div>
-
-        <div
-          class="border-2 border-blue-400 col-start-4 row-start-2 row-end-4 rounded-lg"
-        >
-          <p class="p-3 font-bold text-blue-400">Assignees</p>
-          <textarea
-            v-model="newTask.assignees"
-            class="itbkk-assignees pl-5 textarea textarea-ghost h-5/5 w-11/12 ml-2"
-            :class="
-              newTask.assignees ? 'bg-white text-black' : 'italic text-gray-500'
-            "
-            placeholder="Unassigned"
-          ></textarea>
-        </div>
-
-        <div
-          class="border-2 border-blue-400 col-start-4 p-2 row-start-4 row-end-5 rounded-lg"
-        >
-          <label for="status" class="p-2 font-bold text-blue-400">Status</label>
-          <select
-            v-model="newTask.status"
-            class="itbkk-status pl-5 border-2 rounded-md h-10 pr-5"
+      <div class="bg-white p-6 rounded-lg w-11/12 max-w-3xl">
+        <h2 class="text-2xl font-bold text-blue-400 mb-4 border-b-2">
+          Edit Task
+        </h2>
+        <div class="mb-4">
+          <label for="title" class="block text-blue-400 font-bold mb-2"
+            >Title</label
           >
-            <option
-              v-for="(status, index) in myStatus.getStatus()"
-              :key="index"
-              :value="status.name"
+          <input
+            type="text"
+            id="title"
+            v-model="newTask.title"
+            placeholder="Enter Title here..."
+            class="itbkk-title w-full border border-blue-400 rounded-lg py-2 px-3 input input-ghost"
+          />
+        </div>
+        <div class="flex">
+          <div class="w-2/3 mr-2">
+            <label for="description" class="block text-blue-400 font-bold mb-2"
+              >Description</label
             >
-              {{ status.name }}
-            </option>
-          </select>
+            <textarea
+              id="description"
+              v-model="newTask.description"
+              class="itbkk-description w-full border border-blue-400 rounded-lg py-3 px-3 h-72 textarea textarea-ghost"
+              :class="
+                newTask.description
+                  ? 'bg-white text-black'
+                  : 'italic text-gray-500'
+              "
+              placeholder="No Description Provided"
+            ></textarea>
+          </div>
+          <div class="w-1/3">
+            <div>
+              <label for="assignees" class="block text-blue-400 font-bold mb-2"
+                >Assignees</label
+              >
+              <textarea
+                id="assignees"
+                v-model="newTask.assignees"
+                class="itbkk-assignees w-full border border-blue-400 rounded-lg py-3 px-3 h-42 textarea textarea-ghost"
+                :class="
+                  newTask.assignees
+                    ? 'bg-white text-black'
+                    : 'italic text-gray-500'
+                "
+                placeholder="Unassigned"
+              ></textarea>
+            </div>
+            <div>
+              <label for="status" class="block text-blue-400 font-bold mb-2"
+                >Status</label
+              >
+              <select
+                v-model="newTask.status"
+                class="itbkk-status pl-5 border-2 rounded-md h-10 pr-5 w-full"
+              >
+                <option
+                  v-for="(status, index) in myStatus.getStatus()"
+                  :key="index"
+                  :value="status.name"
+                >
+                  {{ status.name }}
+                </option>
+              </select>
+            </div>
+            <div class="mt-5">
+              <p
+                class="itbkk-timezone pl-3 font-semibold text-sm text-blue-400"
+              >
+                Time Zone :
+                {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
+              </p>
+              <p
+                class="itbkk-created-on pl-3 font-semibold text-sm text-blue-400"
+              >
+                Created On :
+                {{ new Date(task.createdOn).toLocaleString("en-GB") }}
+              </p>
+              <p
+                class="itbkk-updated-on pl-3 font-semibold text-sm text-blue-400"
+              >
+                Updated On :
+                {{ new Date(task.updatedOn).toLocaleString("en-GB") }}
+              </p>
+            </div>
+          </div>
         </div>
-
-        <div class="col-start-4 rounded-lg">
-          <p class="itbkk-timezone pl-3 font-semibold text-sm text-blue-400">
-            Time Zone : {{ Intl.DateTimeFormat().resolvedOptions().timeZone }}
-          </p>
-          <p class="itbkk-created-on pl-3 font-semibold text-sm text-blue-400">
-            Created On :
-            {{ new Date(task.createdOn).toLocaleString("en-GB") }}
-          </p>
-          <p class="itbkk-updated-on pl-3 font-semibold text-sm text-blue-400">
-            Updated On :
-            {{ new Date(task.updatedOn).toLocaleString("en-GB") }}
-          </p>
-        </div>
-
-        <div class="col-start-1 row-start-6 col-span-2">
-          <p class="text-red-500">
-            {{
-              errorTask.title || errorTask.description || errorTask.assignees
-            }}
-          </p>
-        </div>
-
-        <div class="col-span-4 place-self-end rounded-lg">
-          <button
-            class="itbkk-button-confirm btn mr-3 bg-green-400 disabled:bg-green-200"
-            @click="editSave(newTask)"
-            :disabled="changeTask"
-          >
-            Save
-          </button>
-          <button class="itbkk-button-cancle btn" @click="$emit('closeModal')">
-            Close
-          </button>
+        <div class="flex justify-between mt-4">
+          <div>
+            <p class="text-red-500">
+              {{
+                errorTask.title || errorTask.description || errorTask.assignees
+              }}
+            </p>
+          </div>
+          <div>
+            <button
+              class="itbkk-button-confirm btn mr-3 bg-green-400 disabled:bg-green-200"
+              @click="editSave(newTask)"
+              :disabled="changeTask"
+            >
+              Save
+            </button>
+            <button
+              class="itbkk-button-cancle btn"
+              @click="$emit('closeModal')"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

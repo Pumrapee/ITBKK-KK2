@@ -115,7 +115,7 @@ watch(props, () => {
           type="text"
           id="name"
           v-model="newStatus.name"
-          class="w-full border border-blue-400 rounded-lg py-2 px-3"
+          class="w-full border border-blue-400 rounded-lg py-2 px-3 input input-ghost"
           placeholder="Enter Name here..."
         />
         <p class="text-red-400">
@@ -130,7 +130,7 @@ watch(props, () => {
         <textarea
           id="description"
           v-model="newStatus.description"
-          class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44"
+          class="w-full border border-blue-400 rounded-lg py-3 px-3 h-44 textarea textarea-ghost"
           :class="
             newStatus.description
               ? 'bg-white text-black'

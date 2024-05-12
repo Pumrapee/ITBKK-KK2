@@ -16,6 +16,16 @@ async function getItemById(url, id) {
     if (data.status === 404) return 404
   }
 }
+async function findStatus(url, id) {
+  let data
+  try {
+    data = await fetch(`${url}/${id}`)
+    const item = await data.json()
+    return item
+  } catch (error) {
+    if (data.status === 404) return 404
+  }
+}
 
 async function deleteItemById(url, id) {
   //DELETE Method
@@ -82,4 +92,5 @@ export {
   addItem,
   editItem,
   deleteItemByIdToNewId,
+  findStatus,
 }

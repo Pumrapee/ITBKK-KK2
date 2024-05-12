@@ -20,10 +20,7 @@ const filteredStatus = computed(() => {
   return myStatus.getStatus().filter(status => status.id !== modal.deleteId)
 })
 
-
-console.log(myTask.getTasks())
-
-const emits = defineEmits(["closeDeleteStatus", "closeCancle"])
+const emits = defineEmits(["closeDeleteStatus", "closeCancle" , "closeTransferStatus"])
 
 const confirmDelete = async () => {
     const deleteItem = await deleteItemById(
@@ -33,24 +30,27 @@ const confirmDelete = async () => {
 
     if (deleteItem === 200) {
       myStatus.removeStatus(modal.deleteId)
-      emits("closeDeleteStatus")
+      emits("closeDeleteStatus",deleteItem)
     }
     if (deleteItem === 400) {       
         emits("closeCancle")
          showTransferModal.value =true
     }
+    if (deleteItem === 404) {       
+        emits("closeDeleteStatus",deleteItem)
+        myStatus.removeStatus(modal.deleteId)
+    }
 }
 
 const transferTasks = async() =>{
     const newStatus = await deleteItemByIdToNewId(`${import.meta.env.VITE_BASE_URL}statuses`,modal.deleteId,selectedStatus.value)
-    console.table(newStatus)
     if(newStatus === 200){
         myStatus.removeStatus(modal.deleteId)
         showTransferModal.value =false
         const listTasks = await getItems(`${import.meta.env.VITE_BASE_URL}tasks`)
         myTask.clearTask()
         myTask.addTasks(listTasks)
-        emits("closeDeleteStatus")
+        emits("closeTransferStatus",newStatus)
     }
 }
 

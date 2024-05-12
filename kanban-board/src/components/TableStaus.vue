@@ -6,7 +6,7 @@ import { useModalStore } from "@/stores/modal"
 import AddStatus from "./AddStatus.vue"
 import EditStatus from "./EditStatus.vue"
 import router from "@/router"
-import { getItemById } from "../libs/fetchUtils"
+import { getItemById, findStatus } from "../libs/fetchUtils"
 import AlertComponent from "./Alert.vue"
 import DeleteStatus from "./DeleteStatus.vue"
 
@@ -20,16 +20,13 @@ const statusItems = ref()
 const modalAlert = ref({ message: "", type: "", modal: false })
 
 myTask.showNavbar = false
-
-console.log(myStatus.getStatus())
 const openAddStatus = () => {
   showAddModal.value = true
 }
 
 const openDeleteStatus = (id, name) => {
+  // const status = findStatus(`${import.meta.env.VITE_BASE_URL}tasks/status`, id)
   showDeleteModal.value = true
-
-  
   modal.deleteId = id
   modal.deleteName = name
 }
@@ -107,8 +104,44 @@ const closeEditModal = (statusCode) => {
   }
 }
 
-const closeDeleteModal = () => {
-  showDeleteModal.value = false
+const closeDeleteModal = (statusCode) => {
+  if (statusCode === 200) {
+    showDeleteModal.value = false
+    modalAlert.value = {
+      message: "The status has been deleted",
+      type: "success",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+  if (statusCode === 404) {
+    showDeleteModal.value = false
+    modalAlert.value = {
+      message: "An error has occurred, the status does not exist.",
+      type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
+}
+
+const closeTransfereModal = (statusCode) => {
+  if (statusCode === 200) {
+    showDeleteModal.value = false
+    modalAlert.value = {
+      message:
+        "The task(s) have been transferred and the status has been deleted",
+      type: "success",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "2500")
+  }
 }
 
 const openEditStatus = async (idStatus) => {
@@ -172,7 +205,10 @@ const openEditStatus = async (idStatus) => {
             <th class="text-blue-400 pl-20">{{ index + 1 }}</th>
 
             <td class="pl-20 w-1/3">
-              <p class="h-5 font-medium" style="text-align: left">
+              <p
+                class="h-auto max-w-40 font-medium rounded-md text-center p-3 break-all"
+                :style="{ 'background-color': task.color }"
+              >
                 {{ task.name }}
               </p>
             </td>
@@ -233,6 +269,7 @@ const openEditStatus = async (idStatus) => {
     :showDeleteStatus="showDeleteModal"
     @closeCancle="closeCancle"
     @closeDeleteStatus="closeDeleteModal"
+    @closeTransferStatus="closeTransfereModal"
   />
   <AlertComponent
     :message="modalAlert.message"

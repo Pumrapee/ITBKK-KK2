@@ -24,10 +24,10 @@ const changeStatus = computed(() => {
       return value?.trim().length === 0 ? null : value?.trim()
     }
   }
-
   const oldStatus = {
     name: props.taskStatus.name,
     description: props.taskStatus.description,
+    color: props.taskStatus.color,
   }
 
   const newName = trimAndCheckNull(newStatus.value.name)
@@ -45,7 +45,9 @@ const changeStatus = computed(() => {
     : (errorStatus.value.description = "")
 
   return (
-    (oldStatus.name === newName && oldStatus.description === newDescription) ||
+    (oldStatus.name === newName &&
+      oldStatus.description === newDescription &&
+      oldStatus.color === newStatus.value.color) ||
     newName === null
   )
 })
@@ -68,6 +70,7 @@ const editStatusSave = async (status) => {
     {
       name: editStatus.name,
       description: editStatus.description,
+      color: editStatus.color,
     }
   )
 
@@ -75,7 +78,8 @@ const editStatusSave = async (status) => {
     myStatus.updateStatus(
       editedItem.id,
       editedItem.name,
-      editedItem.description
+      editedItem.description,
+      editedItem.color
     )
     emits("closeEditStatus", statusCode)
   }
@@ -141,6 +145,13 @@ watch(props, () => {
         <p class="text-red-400">
           {{ errorStatus.description }}
         </p>
+      </div>
+
+      <div class="mb-6 flex">
+        <label for="color" class="block text-blue-400 font-bold mb-2"
+          >Color:</label
+        >
+        <input v-model="newStatus.color" class="ml-3" type="color" />
       </div>
 
       <div class="flex justify-end">

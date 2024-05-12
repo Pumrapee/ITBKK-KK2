@@ -10,24 +10,31 @@ export const useStatusStore = defineStore("status", () => {
   //actions
   const addStatus = (newTasks) => {
     newTasks.forEach((newTask) =>
-      addOneStatus(newTask.id, newTask.name, newTask.description)
+      addOneStatus(newTask.id, newTask.name, newTask.description, newTask.color)
     )
   }
-  const addOneStatus = (id, name, desc) => {
+  const addOneStatus = (id, name, desc, color) => {
     listStatus.value.push({
       id: id,
       name: name,
       description: desc,
+      color: color,
     })
   }
 
-  const updateStatus = (id, name, desc) => {
+  const getStatusColor = (nameStatus) => {
+    const status = listStatus.value.find((sta) => sta.name === nameStatus)
+    return status ? status.color : null
+  }
+
+  const updateStatus = (id, name, desc, color) => {
     listStatus.value = listStatus.value.map((todo) => {
       return todo.id === id
         ? {
             ...todo,
             name: name,
             description: desc,
+            color: color,
           }
         : todo
     })
@@ -39,7 +46,14 @@ export const useStatusStore = defineStore("status", () => {
       1
     )
   }
-  return { getStatus, addStatus, addOneStatus, removeStatus, updateStatus }
+  return {
+    getStatus,
+    addStatus,
+    addOneStatus,
+    removeStatus,
+    updateStatus,
+    getStatusColor,
+  }
 })
 
 if (import.meta.hot) {

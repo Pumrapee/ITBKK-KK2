@@ -86,9 +86,6 @@ const cancleModal = () => {
 }
 
 const changeTitle = computed(() => {
-  console.log(listNewTask.value.title)
-  console.log(listNewTask.value.status)
-
   const trimmedTitleLength = listNewTask.value.title.trim().length
 
   // ตรวจสอบว่า title มีความยาวมากกว่า 100 หรือมีช่องว่างหรือไม่

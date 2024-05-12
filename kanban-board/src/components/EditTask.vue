@@ -17,8 +17,6 @@ const errorTask = ref({
   assignees: "",
 })
 
-console.log(newTask.value.status)
-
 const changeTask = computed(() => {
   const trimAndCheckNull = (value) => {
     if (value === null) return null
@@ -34,14 +32,10 @@ const changeTask = computed(() => {
     status: props.task.status,
   }
 
-  console.log(oldTask.status)
-
   const newTitle = trimAndCheckNull(newTask.value.title)
   const newDescription = trimAndCheckNull(newTask.value.description)
   const newAssignees = trimAndCheckNull(newTask.value.assignees)
   const newStatus = newTask.value.status
-
-  console.log(newStatus)
 
   newTask.value.title?.length > 100
     ? (errorTask.value.title = "Title exceeds the limit of 100 characters.")

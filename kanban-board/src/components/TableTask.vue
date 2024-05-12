@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref } from "vue"
 import EditTask from "../components/EditTask.vue"
 import { getItemById } from "../libs/fetchUtils"
 import { useTaskStore } from "../stores/taskStore"
+import { useStatusStore } from "../stores/statusStore"
 import router from "@/router"
 import { useModalStore } from "../stores/modal"
 import Delete from "../components/Delete.vue"
@@ -12,15 +13,13 @@ import AlertComponent from "./Alert.vue"
 const showEditModal = ref(false)
 const task = ref()
 const mytasks = useTaskStore()
-
-const editFail = ref(false)
+const myStatus = useStatusStore()
 
 const myTask = useTaskStore()
 
 const modal = useModalStore()
 
 const modalAlert = ref({ message: "", type: "", modal: false })
-console.log(myTask.getTasks())
 myTask.showNavbar = true
 
 const closeCancle = () => {
@@ -142,7 +141,12 @@ const openDeleteModal = (id, title, index) => {
               <p v-else class="text-gray-500 font-medium">Unassigned</p>
             </td>
             <td class="itbkk-status pl-20">
-              <div class="border rounded-md p-2 text-black w-24">
+              <div
+                class="rounded-md p-2 text-black w-24"
+                :style="{
+                  'background-color': myStatus.getStatusColor(task.status),
+                }"
+              >
                 {{ task.status }}
               </div>
             </td>

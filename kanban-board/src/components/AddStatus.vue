@@ -12,22 +12,16 @@ const emits = defineEmits(["closeAddStatus", "closeCancleStatus"])
 const newStatus = ref({
   name: "",
   description: "",
+  color: "#FFFFFF",
 })
 
 const errorStatus = ref({
   name: "",
   description: "",
 })
-const color = ref("")
-console.log(color)
 
 const myStatus = useStatusStore()
 const saveStatus = async () => {
-  // Unique
-  // const oldStatus = myStatus.getStatus()
-  // const checkUnique = newStatus.value.name === oldStatus.name
-  // console.log(checkUnique)
-
   // Trim
   newStatus.value.name = newStatus.value.name?.trim()
   newStatus.value.description = newStatus.value.description?.trim()
@@ -46,10 +40,16 @@ const saveStatus = async () => {
   )
 
   if (statusCode === 201) {
-    myStatus.addOneStatus(newTask.id, newTask.name, newTask.description)
+    myStatus.addOneStatus(
+      newTask.id,
+      newTask.name,
+      newTask.description,
+      newTask.color
+    )
 
     newStatus.value.name = ""
     newStatus.value.description = ""
+    newStatus.value.color = "#FFFFFF"
     emits("closeAddStatus", statusCode)
   }
   if (statusCode === 400 || statusCode === 500) {
@@ -60,27 +60,22 @@ const saveStatus = async () => {
 const cancleStatus = () => {
   newStatus.value.name = ""
   newStatus.value.description = ""
+  newStatus.value.color = "#FFFFFF"
   emits("closeCancleStatus")
 }
 
 const changeStatus = computed(() => {
-  const trimmedNameLength = newStatus.value.name?.trim()?.length
-  if (trimmedNameLength > 50 || trimmedNameLength === 0) {
-    errorStatus.value.name =
-      trimmedNameLength === 0
-        ? "Name is required."
-        : "Name exceeds the limit of 50 characters."
-    return true
-  } else {
-    errorStatus.value.name = ""
-  }
+  newStatus.value.name?.length > 50
+    ? (errorStatus.value.name = "Name exceeds the limit of 50 characters.")
+    : newStatus.value.name?.length === 0
+    ? (errorStatus.value.name = "Name is require.")
+    : (errorStatus.value.name = "")
 
-  //ยังไม่ได้ ต้องพิม name ก่อนถึงจะขึ้น
-  newStatus.value.description?.trim()?.length > 200
+  newStatus.value.description?.length > 200
     ? (errorStatus.value.description =
         "Description exceeds the limit of 200 characters.")
     : (errorStatus.value.description = "")
-  console.log(errorStatus.value.description)
+
   return !newStatus.value.name
 })
 </script>
@@ -103,6 +98,7 @@ const changeStatus = computed(() => {
         <input
           type="text"
           v-model="newStatus.name"
+          max="50"
           id="name"
           class="w-full border border-blue-400 rounded-lg py-2 px-3 input input-ghost"
         />
@@ -143,12 +139,12 @@ const changeStatus = computed(() => {
         </div>
       </div>
 
-      <!-- <div class="mb-6 flex">
+      <div class="mb-6 flex">
         <label for="color" class="block text-blue-400 font-bold mb-2"
           >Color:</label
         >
-        <input v-model="color" class="ml-3" type="color" />
-      </div> -->
+        <input v-model="newStatus.color" class="ml-3" type="color" />
+      </div>
 
       <div class="flex justify-end">
         <button

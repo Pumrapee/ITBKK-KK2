@@ -18,7 +18,7 @@ public class Status {
     @Column(name = "statusDescription")
     private String description;
     @Column(name = "statusColor")
-    private String color = "#FFFFFF";
+    private String color = "#ffffff";
 
     public void setName(String name) {
         if (name != null) {
@@ -42,7 +42,7 @@ public class Status {
 
     public void setColor(String color) {
         if (color == null || color.isBlank() || color.length() != 7) {
-            color = "#FFFFFF";
+            color = "#ffffff";
         }
         this.color = color;
     }

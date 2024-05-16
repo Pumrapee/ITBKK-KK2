@@ -33,8 +33,8 @@ public class StatusService {
     @Transactional
     public Status removeStatus(Integer id) {
         Status status = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
-        if (status.getName() == "No Status") {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Deletion of record with No Status is not allowed.");
+        if (id == 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deletion of record with No Status is not allowed.");
         } else {
             repository.delete(status);
             return status;
@@ -44,8 +44,8 @@ public class StatusService {
     @Transactional
     public Status updateStatus(Integer id, Status status) {
         Status existingStatus = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("NOT FOUND"));
-        if (existingStatus.getName() == "No Status") {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Updation of record with No Status is not allowed.");
+        if (id == 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Updation of record with No Status is not allowed.");
         } else {
             existingStatus.setName(status.getName());
             existingStatus.setDescription(status.getDescription());

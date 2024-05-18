@@ -8,12 +8,12 @@ const props = defineProps({
   showLimitModal: Boolean,
 })
 
-const isLimitEnabled = ref(false)
-const maxTasks = ref(10)
+const myLimit = useLimitStore()
+const isLimitEnabled = ref(myLimit.getLimit().taskLimitEnabled)
+const maxTasks = ref(myLimit.getLimit().maxTasksPerStatus)
 const myTask = useTaskStore()
 const showLimitStatus = ref()
 const emits = defineEmits(["closeLimitModal", "closeCancle"])
-const limitStatus = useLimitStore()
 
 const closelimitModal = async (maxlimit) => {
   //นับจำนวน status ที่ใช้ของแต่ละอัน ได้ค่าเป็น {}
@@ -51,8 +51,8 @@ const closelimitModal = async (maxlimit) => {
     )
 
     //เอาค่า fetch เก็บใน store
-    limitStatus.addLimit(editedLimit)
-    console.log(limitStatus.getLimit())
+    myLimit.addLimit(editedLimit)
+    console.log(myLimit.getLimit())
 
     //check ว่าค่า excessCount มีค่าเป็น 0 ไหม
     const statusIsNotLimit = StatusIslimit.every((status) => {

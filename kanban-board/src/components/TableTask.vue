@@ -35,15 +35,6 @@ const closeCancle = () => {
 }
 const closeEditModal = (statusCode) => {
   if (statusCode === 200) {
-    myTask.updateTask(
-      task.id,
-      task.title,
-      task.description,
-      task.assignees,
-      task.status,
-      task.createdTime,
-      task.updatedTime
-    )
     showEditModal.value = false
     router.go(-1)
     modalAlert.value = {
@@ -203,7 +194,7 @@ const closeLimitModal = (maxlimit, limintBoolean, statusIsNotLimit) => {
   if (limintBoolean === false) {
     showLimitModal.value = false
   }
-  if (limintBoolean === true  && statusIsNotLimit === true) {
+  if (limintBoolean === true && statusIsNotLimit === true) {
     showLimitModal.value = false
     modalAlert.value = {
       message: `The Kanban board now limits ${maxlimit} tasks in each status.`,

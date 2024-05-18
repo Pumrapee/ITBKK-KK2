@@ -136,7 +136,7 @@ const closeDeleteModal = (statusCode) => {
   }
 }
 
-const closeTransfereModal = (statusCode) => {
+const closeTransfereModal = (statusCode, statusName) => {
   if (statusCode === 200) {
     showTransferModal.value = false
     modalAlert.value = {
@@ -155,6 +155,17 @@ const closeTransfereModal = (statusCode) => {
     modalAlert.value = {
       message: "An error has occurred, the status does not exist.",
       type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "4000")
+  }
+
+  if (statusCode === 507) {
+    modalAlert.value = {
+      message: `The status ${statusName} will have too many tasks.  Please make progress and update status of existing tasks first.`,
+      type: "warning",
       modal: true,
     }
     setTimeout(() => {
@@ -245,7 +256,7 @@ const openEditStatus = async (idStatus) => {
             </td>
 
             <!-- ใส่ v-if เพื่อตรวจสอบว่า index เท่ากับ 0 หรือไม่ -->
-            <td v-if="index !== 0 && index !==1" class="ml-10 flex">
+            <td v-if="index !== 0 && index !== 1" class="ml-10 flex">
               <div class="mr-2">
                 <router-link
                   :to="{ name: 'EditStatus', params: { id: task.id } }"

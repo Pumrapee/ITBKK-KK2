@@ -135,6 +135,10 @@ const editSave = async (task) => {
     myTask.removeTasks(editedItem.id)
     emits("closeEditTask", statusCode)
   }
+
+  if (statusCode === 507) {
+    emits("closeEditTask", statusCode, editedTask.status)
+  }
 }
 
 watch(props, () => {

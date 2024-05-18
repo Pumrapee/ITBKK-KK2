@@ -33,7 +33,7 @@ const closeCancle = () => {
   if (showDeleteModal.value === true) showDeleteModal.value = false
   if (showLimitModal.value === true) showLimitModal.value = false
 }
-const closeEditModal = (statusCode) => {
+const closeEditModal = (statusCode, status) => {
   if (statusCode === 200) {
     showEditModal.value = false
     router.go(-1)
@@ -66,6 +66,17 @@ const closeEditModal = (statusCode) => {
     modalAlert.value = {
       message: "An error has occurred, the task does not exist.",
       type: "error",
+      modal: true,
+    }
+    setTimeout(() => {
+      modalAlert.value.modal = false
+    }, "4000")
+  }
+
+  if (statusCode === 507) {
+    modalAlert.value = {
+      message: `The status ${status} will have too many tasks.  Please make progress and update status of existing tasks first.`,
+      type: "warning",
       modal: true,
     }
     setTimeout(() => {

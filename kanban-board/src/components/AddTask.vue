@@ -81,6 +81,10 @@ const saveNewTask = async () => {
 
     emits("closeAddModal", statusCode)
   }
+
+  if (statusCode === 507) {
+    emits("closeAddModal", statusCode, listNewTask.value.status)
+  }
 }
 
 const cancleModal = () => {

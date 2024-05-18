@@ -45,6 +45,7 @@ const transferTasks = async() =>{
     if(newStatus === 200){
         myStatus.removeStatus(props.deatailStatus.id)
         const listTasks = await getItems(`${import.meta.env.VITE_API_URL}tasks`)
+        // หลัง tranfer สำเร้จ ให้ค่าใน task status เปลี่ยน
         myTask.clearTask()
         myTask.addTasks(listTasks)
         emits("closeTransferStatus",newStatus)
@@ -52,9 +53,11 @@ const transferTasks = async() =>{
     if(newStatus === 404){
         myStatus.removeStatus(filteredStatus.id)
         const listTasks = await getItems(`${import.meta.env.VITE_API_URL}tasks`)
-        myTask.clearTask()
-        myTask.addTasks(listTasks)
         emits("closeTransferStatus",newStatus)
+    }
+    if(newStatus === 507) {
+      const selectedName = myStatus.getStatus().find(status => status.id === selectedStatus.value)
+      emits("closeTransferStatus",newStatus , selectedName.name)
     }
 }
 

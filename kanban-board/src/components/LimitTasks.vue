@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, defineEmits } from "vue"
+import { ref, defineProps, defineEmits, onMounted } from "vue"
 import { useTaskStore } from "@/stores/taskStore"
 import { editLimitStatus } from "../libs/fetchUtils"
 import { useLimitStore } from "../stores/limitStore"
@@ -15,7 +15,33 @@ const myTask = useTaskStore()
 const showLimitStatus = ref()
 const emits = defineEmits(["closeLimitModal", "closeCancle"])
 
+//refresh แล้วค่า limit ยังอยู่
+onMounted(() => {
+  const storedIsLimitEnabled = localStorage.getItem("isLimitEnabled")
+  const storedMaxTasks = localStorage.getItem("maxTasks")
+
+  if (storedIsLimitEnabled !== null) {
+    isLimitEnabled.value = JSON.parse(storedIsLimitEnabled)
+  } else {
+    isLimitEnabled.value = myLimit.getLimit().taskLimitEnabled
+  }
+
+  if (storedMaxTasks !== null) {
+    maxTasks.value = JSON.parse(storedMaxTasks)
+  } else {
+    maxTasks.value = myLimit.getLimit().maxTasksPerStatus || 10
+  }
+})
+
+const saveStateToLocalStorage = () => {
+  localStorage.setItem("isLimitEnabled", isLimitEnabled.value)
+  localStorage.setItem("maxTasks", maxTasks.value)
+}
+
 const closelimitModal = async (maxlimit) => {
+  // Save state to localStorage
+  saveStateToLocalStorage()
+
   //นับจำนวน status ที่ใช้ของแต่ละอัน ได้ค่าเป็น {}
   if (isLimitEnabled.value === true) {
     const lengthStatus = myTask.getTasks().reduce((taskacc, task) => {

@@ -39,13 +39,13 @@ const changeTask = computed(() => {
 
   // ตรวจสอบความยาวของ title, description, และ assignees
   const isTitleTooLong = newTitle?.length > 100
-  const isTitleTooEmpthy = newTitle?.length === 0
+  const isTitleEmpty = newTitle === null
   const isDescriptionTooLong = newDescription?.length > 500
   const isAssigneesTooLong = newAssignees?.length > 30
 
   if (isTitleTooLong) {
     errorTask.value.title = "Title exceeds the limit of 100 characters."
-  } else if (isTitleTooEmpthy) {
+  } else if (isTitleEmpty) {
     errorTask.value.title = "Title is required."
   } else {
     errorTask.value.title = ""
@@ -69,7 +69,7 @@ const changeTask = computed(() => {
     isTitleTooLong ||
     isDescriptionTooLong ||
     isAssigneesTooLong ||
-    isTitleTooEmpthy ||
+    isTitleEmpty ||
     newTitle === null ||
     (oldTask.title === newTitle &&
       oldTask.description === newDescription &&

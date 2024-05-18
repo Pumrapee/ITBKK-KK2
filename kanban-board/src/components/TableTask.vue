@@ -181,6 +181,10 @@ const filteredTasks = computed(() => {
   }
 })
 
+const clearFilter = () => {
+  filterStatus.value = []
+}
+
 watch(
   () => myTask.getTasks(),
   (newTasks) => {
@@ -251,9 +255,15 @@ const closeLimitModal = (maxlimit, limintBoolean, statusIsNotLimit) => {
       <div class="font-bold text-4xl text-blue-400 m-2">My Task</div>
 
       <div class="flex items-center">
-        <details className="dropdown dropdown-end ">
-          <summary className="mr-1 btn bg-pink-400 text-white">
-            <img src="/icons/filter.png" class="w-6" />
+        <div class="text-sm pr-2" v-if="filterStatus.length > 0">
+          <button class="text-red-500" @click="clearFilter">
+            Clear filter
+          </button>
+        </div>
+        <details className="dropdown dropdown-end">
+          <summary className="m-1 btn">
+            <img src="/icons/filter.png" class="w-4" />
+
             Filter
           </summary>
           <ul

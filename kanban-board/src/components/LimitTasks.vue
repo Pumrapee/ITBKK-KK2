@@ -10,7 +10,7 @@ const props = defineProps({
 
 const myLimit = useLimitStore()
 const isLimitEnabled = ref(myLimit.getLimit().taskLimitEnabled)
-const maxTasks = ref(myLimit.getLimit().maxTasksPerStatus)
+const maxTasks = ref(myLimit.getLimit().maxTasksPerStatus || 10)
 const myTask = useTaskStore()
 const showLimitStatus = ref()
 const emits = defineEmits(["closeLimitModal", "closeCancle"])
@@ -76,9 +76,7 @@ const closelimitModal = async (maxlimit) => {
     )
 
     //เอาค่า fetch เก็บใน store
-    limitStatus.addLimit(editedLimit)
-    console.log(limitStatus.getLimit())
-
+    myLimit.addLimit(editedLimit)
     //แปลกๆ
     emits(
       "closeLimitModal",

@@ -211,7 +211,6 @@ watch(
             <div class="flex items-center">
               <img src="/icons/close.png" class="w-3" />
             </div>
-
           </button>
         </div>
         <details className="dropdown dropdown-end">
@@ -225,7 +224,7 @@ watch(
             className="overflow-y-auto h-64 dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-30"
           >
             <li v-for="status in myStatus.getStatus()">
-              <div className="form-control">
+              <div className="form-control" style="word-wrap: break-word">
                 <label className="label cursor-pointer">
                   <input
                     type="checkbox"

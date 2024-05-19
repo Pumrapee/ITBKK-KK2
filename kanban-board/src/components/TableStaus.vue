@@ -211,11 +211,26 @@ const openEditStatus = async (idStatus) => {
           <li>Task Status</li>
         </ul>
       </div>
-      <RouterLink :to="{ name: 'AddStatus' }">
-        <button @click="openAddStatus" class="itbkk-button-home btn">
-          Add status
-        </button>
-      </RouterLink>
+      <div class="flex items-center">
+        <RouterLink :to="{ name: 'task' }">
+          <button
+            @click="openAddStatus"
+            class="itbkk-button-home btn mr-1 bg-pink-400 text-white"
+          >
+            <img src="/icons/home.png" class="w-4" />
+            Home
+          </button>
+        </RouterLink>
+        <RouterLink :to="{ name: 'AddStatus' }">
+          <button
+            @click="openAddStatus"
+            class="itbkk-button-home btn bg-blue-400 text-white"
+          >
+            <img src="/icons/plus.png" class="w-4" />
+            Add Status
+          </button>
+        </RouterLink>
+      </div>
     </div>
 
     <!-- Task Table -->

@@ -121,8 +121,8 @@ const closeCancle = () => {
 <template>
   <div v-if="showLimitModal" class="fixed z-10 inset-0 overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen bg-black/[.15]">
-      <div class="modal-box">
-        <h3 class="font-bold text-lg">Status Settings</h3>
+      <div class="itbkk-modal-setting modal-box">
+        <h3 class="font-bold text-lg text-blue-400">Status Settings</h3>
         <p class="py-4">
           Users can limit the number of tasks in a status by setting the Maximum
           tasks in each status
@@ -132,19 +132,23 @@ const closeCancle = () => {
         </p>
         <div class="form-control">
           <label class="cursor-pointer label">
-            <span class="label-text">Enable Limit</span>
-            <input type="checkbox" v-model="isLimitEnabled" class="toggle" />
+            <span class="label-text text-blue-400">Enable Limit</span>
+            <input
+              type="checkbox"
+              v-model="isLimitEnabled"
+              class="itbkk-limit-task toggle toggle-pink"
+            />
           </label>
         </div>
 
         <div v-if="isLimitEnabled === true" class="form-control mt-4">
           <label class="label">
-            <span class="label-text">Maximum Tasks</span>
+            <span class="label-text text-blue-400">Maximum Tasks</span>
           </label>
           <input
             type="number"
             v-model="maxTasks"
-            class="input input-bordered"
+            class="itbkk-max-task input input-bordered"
             placeholder="Enter max tasks"
           />
         </div>
@@ -158,8 +162,8 @@ const closeCancle = () => {
         </div>
 
         <div class="modal-action">
-          <button @click="closelimitModal(maxTasks)" class="btn">Save</button>
-          <button @click="closeCancle()" class="btn">Close</button>
+          <button @click="closelimitModal(maxTasks)" class="itbkk-button-confirm btn bg-green-400 text-white disabled:bg-green-200 disabled:text-white">Save</button>
+          <button @click="closeCancle()" class="itbkk-button-cancel btn">Cancel</button>
         </div>
       </div>
     </div>
@@ -186,5 +190,10 @@ const closeCancle = () => {
   border-radius: 0.5rem;
   width: 400px;
   max-width: 100%;
+}
+
+.toggle-pink:checked {
+  background-color: #f472b6; /* สีชมพู 400 ใน Tailwind CSS */
+  border-color: #f472b6;
 }
 </style>

@@ -164,7 +164,7 @@ const closeTransfereModal = (statusCode, statusName) => {
 
   if (statusCode === 507) {
     modalAlert.value = {
-      message: `The status ${statusName} will have too many tasks.  Please make progress and update status of existing tasks first.`,
+      message: `Cannot transfer to ${statusName} status since it will exceed the limit.  Please choose another status to transfer to.`,
       type: "warning",
       modal: true,
     }

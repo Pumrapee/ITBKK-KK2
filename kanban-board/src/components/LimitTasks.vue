@@ -13,7 +13,7 @@ const isLimitEnabled = ref(myLimit.getLimit().taskLimitEnabled)
 const maxTasks = ref(myLimit.getLimit().maxTasksPerStatus || 10)
 const myTask = useTaskStore()
 const showLimitStatus = ref()
-const emits = defineEmits(["closeLimitModal", "closeCancle"])
+const emits = defineEmits(["closeLimitModal", "closeCancel"])
 
 //refresh แล้วค่า limit ยังอยู่
 onMounted(() => {
@@ -113,8 +113,8 @@ const closelimitModal = async (maxlimit) => {
   }
 }
 
-const closeCancle = () => {
-  emits("closeCancle")
+const closeCancel = () => {
+  emits("closeCancel")
 }
 </script>
 
@@ -163,7 +163,7 @@ const closeCancle = () => {
 
         <div class="modal-action">
           <button @click="closelimitModal(maxTasks)" class="itbkk-button-confirm btn bg-green-400 text-white disabled:bg-green-200 disabled:text-white">Save</button>
-          <button @click="closeCancle()" class="itbkk-button-cancel btn">Cancel</button>
+          <button @click="closeCancel()" class="itbkk-button-cancel btn">Cancel</button>
         </div>
       </div>
     </div>

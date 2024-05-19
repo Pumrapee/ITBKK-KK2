@@ -44,7 +44,7 @@ const openDeleteStatus = async (id, name) => {
   }
 }
 
-const closeCancle = () => {
+const closeCancel = () => {
   if (showDeleteModal.value === true) {
     showDeleteModal.value = false
   }
@@ -304,19 +304,19 @@ const openEditStatus = async (idStatus) => {
   <EditStatus
     :showEditStatus="showEditModal"
     @closeEditStatus="closeEditModal"
-    @closeCancleStatus="closeCancle"
+    @closeCancelStatus="closeCancel"
     :taskStatus="statusItems"
   />
   <AddStatus
     :showAddStatus="showAddModal"
     @closeAddStatus="closeAddModal"
-    @closeCancleStatus="closeCancle"
+    @closeCancelStatus="closeCancel"
   />
   <DeleteStatus
     :showDeleteStatus="showDeleteModal"
     :showTransferModal="showTransferModal"
     :deatailStatus="statusDetail"
-    @closeCancle="closeCancle"
+    @closeCancel="closeCancel"
     @closeDeleteStatus="closeDeleteModal"
     @closeTransferStatus="closeTransfereModal"
   />

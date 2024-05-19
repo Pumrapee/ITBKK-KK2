@@ -25,7 +25,7 @@ const { showbtnDelete } = defineProps({
 //โชว์ add delete บน navbar
 myTask.showNavbar = true
 
-const closeCancle = () => {
+const closeCancel = () => {
   if (showEditModal.value === true) {
     showEditModal.value = false
     router.go(-1)
@@ -241,7 +241,7 @@ const closeLimitModal = (maxlimit, limintBoolean, statusIsNotLimit) => {
 
 <template>
   <EditTask
-    @closeModal="closeCancle"
+    @closeModal="closeCancel"
     @closeEditTask="closeEditModal"
     :showModal="showEditModal"
     :task="task"
@@ -249,13 +249,13 @@ const closeLimitModal = (maxlimit, limintBoolean, statusIsNotLimit) => {
   <Delete
     :showDelete="showDeleteModal"
     :detailDelete="listdelete"
-    @cancleDelete="closeCancle"
+    @cancelDelete="closeCancel"
     @closeDeleteTask="closeDeleteModal"
   />
 
   <LimitTasks
     @closeLimitModal="closeLimitModal"
-    @closeCancle="closeCancle"
+    @closeCancel="closeCancel"
     :showLimitModal="showLimitModal"
   />
 

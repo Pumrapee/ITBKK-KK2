@@ -11,7 +11,7 @@ const { showAdd } = defineProps({
 const myLimit = useLimitStore()
 const myStatus = useStatusStore()
 
-const emits = defineEmits(["closeAddModal", "closeCancle"])
+const emits = defineEmits(["closeAddModal", "closeCancel"])
 
 const selected = ref()
 selected.value = "No Status"
@@ -88,7 +88,7 @@ const saveNewTask = async () => {
   }
 }
 
-const cancleModal = () => {
+const cancelModal = () => {
   // ทำการเคลียร์ค่าในฟอร์ม
   listNewTask.value.title = ""
   listNewTask.value.description = ""
@@ -96,7 +96,7 @@ const cancleModal = () => {
   listNewTask.value.status = selected.value
 
   // ปิด Modal
-  emits("closeCancle")
+  emits("closeCancel")
 }
 
 const changeTitle = computed(() => {
@@ -263,7 +263,7 @@ const changeTitle = computed(() => {
             >
               Save
             </button>
-            <button class="itbkk-button-cancle btn" @click="cancleModal">
+            <button class="itbkk-button-cancel btn" @click="cancelModal">
               Cancel
             </button>
           </div>

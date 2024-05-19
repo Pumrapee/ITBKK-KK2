@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, defineEmits, onMounted } from "vue"
+import { ref, defineProps, defineEmits, onMounted, computed } from "vue"
 import { useTaskStore } from "@/stores/taskStore"
 import { editLimitStatus } from "../libs/fetchUtils"
 import { useLimitStore } from "../stores/limitStore"
@@ -113,6 +113,23 @@ const closelimitModal = async (maxlimit) => {
   }
 }
 
+const errorLimit = ref("")
+
+const changeLimit = computed(() => {
+  const limitMore = maxTasks.value > 30
+  const limitLess = maxTasks.value < 0
+
+  if (limitMore) {
+    errorLimit.value = "Limit status not more than 30"
+  } else if (limitLess) {
+    errorLimit.value = "Limit status not less than 0"
+  } else {
+    errorLimit.value = ""
+  }
+
+  return limitMore || limitLess
+})
+
 const closeCancel = () => {
   emits("closeCancel")
 }
@@ -153,6 +170,10 @@ const closeCancel = () => {
           />
         </div>
 
+        <div class="pt-2 text-red-500">
+          {{ errorLimit }}
+        </div>
+
         <div class="pt-5" v-if="isLimitEnabled">
           <p v-for="(status, index) in showLimitStatus" :key="index">
             <template v-if="status.excessCount > 0">
@@ -162,8 +183,16 @@ const closeCancel = () => {
         </div>
 
         <div class="modal-action">
-          <button @click="closelimitModal(maxTasks)" class="itbkk-button-confirm btn bg-green-400 text-white disabled:bg-green-200 disabled:text-white">Save</button>
-          <button @click="closeCancel()" class="itbkk-button-cancel btn">Cancel</button>
+          <button
+            @click="closelimitModal(maxTasks)"
+            class="itbkk-button-confirm btn bg-green-400 text-white disabled:bg-green-200 disabled:text-white"
+            :disabled="changeLimit"
+          >
+            Save
+          </button>
+          <button @click="closeCancel()" class="itbkk-button-cancel btn">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
